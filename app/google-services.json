@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "976664971480",
+    "project_id": "very-vali",
+    "storage_bucket": "very-vali.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:976664971480:android:ecf98559268f464e896fad",
+        "android_client_info": {
+          "package_name": "com.example.veryvali"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrLBSmlKvtk62jcWm6ciSHebHEbNm7g0Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
