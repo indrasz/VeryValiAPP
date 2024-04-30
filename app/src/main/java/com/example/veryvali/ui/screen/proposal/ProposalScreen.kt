@@ -35,11 +35,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.veryvali.data.repository.RecipientRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProposalScreen(navController: NavHostController) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+    val recipientRepository = RecipientRepository() // Inisialisasi repository di sini
     var currentStep by remember { mutableIntStateOf(1) }
     var proposal1Data by remember { mutableStateOf("") }
     var proposal2Data by remember { mutableStateOf("") }
@@ -86,7 +88,7 @@ fun ProposalScreen(navController: NavHostController) {
             CustomProgressIndicator(currentStep)
             when (currentStep) {
                 1 -> {
-                    Proposal1Form(innerPadding,proposal1Data) { data ->
+                    Proposal1Form(innerPadding, proposal1Data, recipientRepository) { data ->
                         proposal1Data = data
                         currentStep++
                     }

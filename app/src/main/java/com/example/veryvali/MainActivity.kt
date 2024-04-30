@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
     fun ComposeNavigation() {
         val navController = rememberNavController()
 
-        NavHost(navController = navController, startDestination = "main"){
+        NavHost(navController = navController, startDestination = "home"){
             composable("main"){
                 MainScreen(navController = navController)
             }
@@ -71,7 +71,6 @@ class MainActivity : ComponentActivity() {
                 SuccessScreen(navController = navController)
             }
         }
-
     }
 }
 

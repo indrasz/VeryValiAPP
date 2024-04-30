@@ -265,9 +265,7 @@ fun ScrollContent(innerPadding: PaddingValues, navController: NavHostController)
                             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                             keyboardActions = KeyboardActions(onNext = { /* Handle next action */ })
                         )
-
                     }
-
                 }
 
                 CollapseItem(
@@ -760,7 +758,6 @@ fun ScrollContent(innerPadding: PaddingValues, navController: NavHostController)
                         style = TextStyle(fontSize = 12.sp)
                     )
                 }
-
             }
         }
     }
