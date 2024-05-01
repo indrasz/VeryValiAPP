@@ -63,10 +63,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.veryvali.R
+import com.example.veryvali.data.model.Recipient
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ResponseScreen(navController: NavHostController)  {
+fun ResponseScreen(navController: NavHostController, recipient: Recipient)  {
+
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -92,19 +94,19 @@ fun ResponseScreen(navController: NavHostController)  {
             )
         },
     ) { innerPadding ->
-        ResponseContent(innerPadding, navController)
+        ResponseContent(innerPadding, navController, recipient)
     }
 }
 
 @Composable
-fun ResponseContent(innerPadding: PaddingValues, navController: NavHostController) {
+fun ResponseContent(innerPadding: PaddingValues, navController: NavHostController, recipient: Recipient) {
 
     var text by remember { mutableStateOf("") }
 
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 72.dp),
+            .padding(end = 16.dp, start = 16.dp, top = 72.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     )
     {
@@ -148,7 +150,7 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
                         )
 
                         Text(
-                            text = "Wahyu Indra",
+                            text = recipient.nama,
                             modifier = Modifier
                                 .padding(bottom = 8.dp),
                             fontWeight = FontWeight.Light,
@@ -169,7 +171,7 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
                         )
 
                         Text(
-                            text = "Margahayu",
+                            text = recipient.kecamatan,
                             modifier = Modifier
                                 .padding(bottom = 8.dp),
                             fontWeight = FontWeight.Light,
@@ -190,7 +192,7 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
                         )
 
                         Text(
-                            text = "Sayati",
+                            text = recipient.desa,
                             fontWeight = FontWeight.Light,
                             style = TextStyle(fontSize = 14.sp)
                         )

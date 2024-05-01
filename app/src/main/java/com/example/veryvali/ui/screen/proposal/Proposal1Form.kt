@@ -11,9 +11,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -43,10 +45,13 @@ fun Proposal1Form(
 ) {
     var nik by remember { mutableStateOf(proposal1Data) }
     val ctx = LocalContext.current
-    var isLoading by remember { mutableStateOf(false) } // State untuk menentukan apakah sedang loading atau tidak
+    var isLoading by remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier.fillMaxWidth().padding(top = 24.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 24.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
 
     ) {
@@ -121,8 +126,7 @@ private fun cekDataNIK(
     nik: String,
     onNext: (String) -> Unit,
     recipientRepository: RecipientRepository,
-    onError: (String) -> Unit // Tambahkan parameter onError untuk menampilkan pesan kesalahan
-//    ctx: androidx.compose.ui.platform.LocalContext.current
+    onError: (String) -> Unit
 ) {
 
     recipientRepository.checkNIK(

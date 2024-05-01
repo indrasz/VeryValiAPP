@@ -1,17 +1,26 @@
 package com.example.veryvali
 
+import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.veryvali.di.RecipientsViewModel
 import com.example.veryvali.ui.screen.login.LoginScreen
 import com.example.veryvali.ui.screen.MainScreen
 import com.example.veryvali.ui.screen.home.HomeScreen
@@ -22,10 +31,10 @@ import com.example.veryvali.ui.screen.response.ResponseScreen
 import com.example.veryvali.ui.screen.success.SuccessScreen
 import com.example.veryvali.ui.screen.verification.VerificationScreen
 import com.example.veryvali.ui.theme.VeryValiTheme
-import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : ComponentActivity() {
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -38,9 +47,13 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @SuppressLint("StateFlowValueCalledInComposition")
+    @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     fun ComposeNavigation() {
         val navController = rememberNavController()
+        val viewModel: RecipientsViewModel = viewModel()
+//        val recipientsState by viewModel.recipientsState.collectAsState()
 
         NavHost(navController = navController, startDestination = "home"){
             composable("main"){
@@ -64,8 +77,21 @@ class MainActivity : ComponentActivity() {
             composable("verification"){
                 VerificationScreen(navController = navController)
             }
-            composable("response"){
-                ResponseScreen(navController = navController)
+//
+            composable("response/{recipientId}",
+                arguments = listOf(navArgument("recipientId") { type = NavType.StringType })) { backStackEntry ->
+                val recipientNIK = backStackEntry.arguments?.getString("recipientId")
+                val recipient = viewModel.recipientsState.value.let { state ->
+                    if (state is RecipientsViewModel.RecipientsState.Success) {
+                        state.recipients.find { it.nik == recipientNIK }
+                    } else {
+                        null
+                    }
+                }
+//                Log.d("Argument Navhost Recipient", "$recipient")
+                if (recipient != null) {
+                    ResponseScreen(navController = navController, recipient = recipient)
+                }
             }
             composable("success"){
                 SuccessScreen(navController = navController)

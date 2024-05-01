@@ -1,5 +1,7 @@
 package com.example.veryvali.ui.screen.proposal
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,13 +37,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.veryvali.data.repository.IndividualRepository
+import com.example.veryvali.data.repository.ProposalRepository
 import com.example.veryvali.data.repository.RecipientRepository
+import com.example.veryvali.data.repository.SurveyRepository
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProposalScreen(navController: NavHostController) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val recipientRepository = RecipientRepository() // Inisialisasi repository di sini
+    val individualRepository = IndividualRepository() // Inisialisasi repository di sini
+    val surveyRepository = SurveyRepository()
+    val proposalRepository = ProposalRepository()// Inisialisasi repository di sini
     var currentStep by remember { mutableIntStateOf(1) }
     var proposal1Data by remember { mutableStateOf("") }
     var proposal2Data by remember { mutableStateOf("") }
@@ -94,19 +103,19 @@ fun ProposalScreen(navController: NavHostController) {
                     }
                 }
                 2 -> {
-                    Proposal2Form(innerPadding,proposal2Data) { data ->
+                    Proposal2Form(innerPadding, proposal2Data, individualRepository) { data ->
                         proposal2Data = data
                         currentStep++
                     }
                 }
                 3 -> {
-                    Proposal3Form(innerPadding,proposal3Data) { data ->
+                    Proposal3Form(innerPadding, proposal3Data, surveyRepository) { data ->
                         proposal3Data = data
                         currentStep++
                     }
                 }
                 4 -> {
-                    Proposal4Form(innerPadding,proposal4Data) { data ->
+                    Proposal4Form(innerPadding, proposal4Data, proposalRepository) { data ->
                         proposal4Data = data
                         currentStep++
                     }
