@@ -119,7 +119,6 @@ fun ScrollContent(innerPadding: PaddingValues, navController: NavHostController)
             .fillMaxSize()
             .padding(top = 56.dp, start = 24.dp, end = 24.dp)
             .verticalScroll(rememberScrollState()),
-        // 56.dp adalah tinggi dari top bar (atau sesuaikan dengan kebutuhan Anda)
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
     ) {

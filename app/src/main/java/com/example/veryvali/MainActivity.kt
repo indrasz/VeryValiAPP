@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -40,7 +41,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             VeryValiTheme {
                 Surface(modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background) {
+                    color = Color.White) {
                     ComposeNavigation()
                 }
             }
@@ -74,10 +75,9 @@ class MainActivity : ComponentActivity() {
             composable("proposal"){
                 ProposalScreen(navController = navController)
             }
-            composable("verification"){
+            composable("verification") {
                 VerificationScreen(navController = navController)
             }
-//
             composable("response/{recipientId}",
                 arguments = listOf(navArgument("recipientId") { type = NavType.StringType })) { backStackEntry ->
                 val recipientNIK = backStackEntry.arguments?.getString("recipientId")
@@ -88,7 +88,6 @@ class MainActivity : ComponentActivity() {
                         null
                     }
                 }
-//                Log.d("Argument Navhost Recipient", "$recipient")
                 if (recipient != null) {
                     ResponseScreen(navController = navController, recipient = recipient)
                 }

@@ -97,12 +97,12 @@ fun Proposal2Form(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(color = Color(0xFFA6D4FD), shape = RoundedCornerShape(24.dp))
+                .background(color = Color(0xFF0E7CDA), shape = RoundedCornerShape(24.dp))
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
 
             Column {
-                Text("Data from Proposal 1: ${recipientData?.id}")
+//                Text("Data from Proposal 1: ${recipientData?.id}")
                 Text(
                     text = "Nomor Kartu Keluarga",
                     modifier = Modifier
