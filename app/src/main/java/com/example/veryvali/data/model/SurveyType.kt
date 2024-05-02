@@ -16,4 +16,5 @@ data class SurveyType(
     val question8: String,
     val question9: String,
     val question10: String,
+    val idRecipient: String,
 ) : Parcelable

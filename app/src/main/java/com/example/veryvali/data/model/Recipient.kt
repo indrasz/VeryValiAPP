@@ -17,4 +17,5 @@ data class Recipient(
     val statusDTKS: String = "",
     val tanggalLahir: String = "",
     val umur: String = "",
+    val id: String = ""
 ) : Parcelable

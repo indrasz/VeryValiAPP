@@ -1,9 +1,8 @@
 package com.example.veryvali.data.repository
 
-import androidx.compose.runtime.Composable
+import android.util.Log
 import com.example.veryvali.data.model.Recipient
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.toObject
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -13,14 +12,30 @@ class RecipientRepository {
     private val firestore = FirebaseFirestore.getInstance()
 
     // Fungsi untuk mengecek data NIK pada Firebase
-    fun checkNIK(NIK: String, onSuccess: () -> Unit, onFailure: () -> Unit) {
+    fun checkNIK(nik: String, onSuccess: (Recipient) -> Unit, onFailure: () -> Unit) {
         val recipientsCollection = firestore.collection("recipients")
 
-        recipientsCollection.whereEqualTo("NIK", NIK).get()
+        recipientsCollection.whereEqualTo("NIK", nik).get()
             .addOnSuccessListener { documents ->
                 if (!documents.isEmpty) {
                     // Data dengan NIK yang sesuai ditemukan
-                    onSuccess()
+                    val document = documents.first()
+                    val recipient = Recipient(
+                        alamat = document.getString("ALAMAT") ?: "",
+                        bansos = document.getString("BANSOS") ?: "",
+                        desa = document.getString("DESA") ?: "",
+                        idBansos = document.getString("ID BANSOS") ?: "",
+                        kabupaten = document.getString("KABUPATEN") ?: "",
+                        kecamatan = document.getString("KECAMATAN") ?: "",
+                        nama = document.getString("NAMA") ?: "",
+                        nik = document.getString("NIK") ?: "",
+                        statusDTKS = document.getString("STATUS DTKS") ?: "",
+                        tanggalLahir = document.getString("TANGGAL LAHIR") ?: "",
+                        umur = document.getString("UMUR") ?: "",
+                        id = document.id,
+                    )
+                    Log.d("Recipient Data from repository", "$recipient")
+                    onSuccess(recipient)
                 } else {
                     // Data dengan NIK yang sesuai tidak ditemukan
                     onFailure()

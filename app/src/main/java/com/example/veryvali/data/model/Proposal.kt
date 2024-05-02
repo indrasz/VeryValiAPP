@@ -11,4 +11,5 @@ data class Proposal(
     val statusOrangTua: String,
     val mapsLatitude: String,
     val mapsLongitude: String,
+    val idRecipient: String,
 ) : Parcelable

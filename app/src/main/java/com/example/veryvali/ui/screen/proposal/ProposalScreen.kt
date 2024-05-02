@@ -1,6 +1,7 @@
 package com.example.veryvali.ui.screen.proposal
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -36,26 +37,38 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.veryvali.data.model.Individual
+import com.example.veryvali.data.model.Recipient
 import com.example.veryvali.data.repository.IndividualRepository
 import com.example.veryvali.data.repository.ProposalRepository
-import com.example.veryvali.data.repository.RecipientRepository
 import com.example.veryvali.data.repository.SurveyRepository
+import com.example.veryvali.di.IndividualViewModel
+import com.example.veryvali.di.ProposalViewModel
+import com.example.veryvali.di.SurveyViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProposalScreen(navController: NavHostController) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    val recipientRepository = RecipientRepository() // Inisialisasi repository di sini
-    val individualRepository = IndividualRepository() // Inisialisasi repository di sini
+//    val recipientRepository = RecipientRepository() // Inisialisasi repository di sini
+//    val individualRepository = IndividualRepository() // Inisialisasi repository di sini
     val surveyRepository = SurveyRepository()
     val proposalRepository = ProposalRepository()// Inisialisasi repository di sini
+
     var currentStep by remember { mutableIntStateOf(1) }
-    var proposal1Data by remember { mutableStateOf("") }
-    var proposal2Data by remember { mutableStateOf("") }
+
+    var recipientData by remember { mutableStateOf<Recipient?>(null) }
+    var proposal2Data by remember { mutableStateOf<Individual?>(null)}
     var proposal3Data by remember { mutableStateOf("") }
     var proposal4Data by remember { mutableStateOf("") }
+
+    val proposalViewModel: ProposalViewModel = viewModel()
+    val individualViewModel: IndividualViewModel = viewModel()
+    val surveyViewModel: SurveyViewModel = viewModel()
+//    val proposalViewModel: SurveyViewModel = viewModel()
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -97,26 +110,25 @@ fun ProposalScreen(navController: NavHostController) {
             CustomProgressIndicator(currentStep)
             when (currentStep) {
                 1 -> {
-                    Proposal1Form(innerPadding, proposal1Data, recipientRepository) { data ->
-                        proposal1Data = data
+                    Proposal1Form(proposalViewModel) { recipient ->
+                        recipientData = recipient
+//                        Log.d("Recipient Data from proposal 1", "$recipientData")
                         currentStep++
                     }
                 }
                 2 -> {
-                    Proposal2Form(innerPadding, proposal2Data, individualRepository) { data ->
-                        proposal2Data = data
+                    Proposal2Form(individualViewModel, recipientData) {
+//                        proposal2Data = individual
                         currentStep++
                     }
                 }
                 3 -> {
-                    Proposal3Form(innerPadding, proposal3Data, surveyRepository) { data ->
-                        proposal3Data = data
+                    Proposal3Form(innerPadding, surveyViewModel, recipientData) {
                         currentStep++
                     }
                 }
                 4 -> {
-                    Proposal4Form(innerPadding, proposal4Data, proposalRepository) { data ->
-                        proposal4Data = data
+                    Proposal4Form(innerPadding, proposalViewModel, recipientData) {
                         currentStep++
                     }
                 }

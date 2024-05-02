@@ -27,6 +27,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,16 +44,18 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.veryvali.data.model.Individual
+import com.example.veryvali.data.model.Recipient
 import com.example.veryvali.data.model.SurveyType
 import com.example.veryvali.data.repository.IndividualRepository
 import com.example.veryvali.data.repository.SurveyRepository
+import com.example.veryvali.di.SurveyViewModel
 
 @Composable
 fun Proposal3Form(
     innerPadding: PaddingValues,
-    proposal3Data: String,
-    surveyRepository: SurveyRepository,
-    onNext: (String) -> Unit
+    surveyViewModel: SurveyViewModel,
+    recipientData: Recipient?,
+    onNextStepWithData: (SurveyType) -> Unit
 ) {
 
     val options = listOf("YA", "TIDAK")
@@ -79,7 +82,7 @@ fun Proposal3Form(
     var question10 by remember { mutableStateOf(options[0]) }
 
     val ctx = LocalContext.current
-    val isLoading by remember { mutableStateOf(false) }
+    val isLoading by surveyViewModel.loadingState.collectAsState()
 
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
@@ -835,46 +838,27 @@ fun Proposal3Form(
                     text = "Selanjutnya",
                     fullWidth = false,
                     onClick = {
-                        val surveyTypeData = SurveyType(
-                            question1 = question1,
-                            question2 = question2,
-                            question3 = question3,
-                            question4 = question4,
-                            question5 = question5,
-                            question6 = question6,
-                            question7 = question7,
-                            question8 = question8,
-                            question9 = question9,
-                            question10 = question10,
-                        )
-                        addSurveyType(
-                            surveyTypeData = surveyTypeData,
-                            onNext = onNext,
-                            surveyRepository = surveyRepository,
-                            onError = { errorMessage ->
-                                Toast.makeText(ctx, errorMessage, Toast.LENGTH_SHORT).show()
-                            }
-                        )
+                        val surveyTypeData = recipientData?.let {
+                            SurveyType(
+                                question1 = question1,
+                                question2 = question2,
+                                question3 = question3,
+                                question4 = question4,
+                                question5 = question5,
+                                question6 = question6,
+                                question7 = question7,
+                                question8 = question8,
+                                question9 = question9,
+                                question10 = question10,
+                                idRecipient = it.id
+                            )
+                        }
+                        surveyViewModel.createSurveyType(surveyTypeData!!, recipientData.id) { survey ->
+                            onNextStepWithData(survey)
+                        }
                     }
                 )
             }
         }
     }
-}
-
-private fun addSurveyType(
-    surveyTypeData: SurveyType,
-    onNext: (String) -> Unit,
-    surveyRepository: SurveyRepository,
-    onError: (String) -> Unit
-) {
-    surveyRepository.createSurveyType(
-        surveyTypeData,
-        onSuccess = {
-            onNext("Data individu berhasil ditambahkan")
-        },
-        onFailure = { errorMessage ->
-            onError(errorMessage ?: "Gagal menambahkan data individu")
-        }
-    )
 }

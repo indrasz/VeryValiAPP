@@ -40,6 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,9 +56,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.veryvali.data.model.Proposal
+import com.example.veryvali.data.model.Recipient
 import com.example.veryvali.data.model.SurveyType
 import com.example.veryvali.data.repository.ProposalRepository
 import com.example.veryvali.data.repository.SurveyRepository
+import com.example.veryvali.di.ProposalViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -66,11 +69,11 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun Proposal4Form(
     innerPadding: PaddingValues,
-    proposal4Data: String,
-    proposalRepository: ProposalRepository,
-    onNext: (String) -> Unit
+    proposalViewModel: ProposalViewModel,
+    recipientData: Recipient?,
+    onNextStepWithData: (Proposal) -> Unit
 ) {
-    var text by remember { mutableStateOf(proposal4Data) }
+//    var text by remember { mutableStateOf(proposal4Data) }
 
     val programBansosOptions = listOf("BNPT", "BST", "BLT-BBM", "RUMAH SEJAHTERA TERPADU (RST)", "SEMBAKO ADAPTIF", "PBI-JK", "BANTUAN YATIM PIATU", "PEMAKANAN", "PENA")
     var programBansosExpanded by remember { mutableStateOf(false) }
@@ -85,16 +88,15 @@ fun Proposal4Form(
     var statusOrangTua by remember { mutableStateOf(statusOrangTuaOptions[0]) }
 
 
-    var mapsLatitude by remember { mutableStateOf(proposal4Data) }
-    var mapsLongitude by remember { mutableStateOf(proposal4Data) }
-    var tanggalHamil by remember { mutableStateOf(proposal4Data) }
+    var mapsLatitude by remember { mutableStateOf("") }
+    var mapsLongitude by remember { mutableStateOf("") }
+    var tanggalHamil by remember { mutableStateOf("") }
 
     val date = remember { mutableStateOf(LocalDate.now())}
     val isOpen = remember { mutableStateOf(false)}
 
     val ctx = LocalContext.current
-    val isLoading by remember { mutableStateOf(false) }
-
+    val isLoading by proposalViewModel.loadingState.collectAsState()
 
     LazyColumn(
         modifier = Modifier
@@ -435,22 +437,20 @@ fun Proposal4Form(
                         text = "Selanjutnya",
                         fullWidth = false,
                         onClick = {
-                            val proposal = Proposal(
-                                programBansos = programBansos,
-                                disabilitas = disabilitas,
-                                tanggalHamil = tanggalHamil,
-                                statusOrangTua = statusOrangTua,
-                                mapsLatitude = mapsLatitude,
-                                mapsLongitude = mapsLongitude,
-                            )
-                            addProposal(
-                                proposal = proposal,
-                                onNext = onNext,
-                                proposalRepository = proposalRepository,
-                                onError = { errorMessage ->
-                                    Toast.makeText(ctx, errorMessage, Toast.LENGTH_SHORT).show()
-                                }
-                            )
+                            val proposal = recipientData?.let {
+                                Proposal(
+                                    programBansos = programBansos,
+                                    disabilitas = disabilitas,
+                                    tanggalHamil = tanggalHamil,
+                                    statusOrangTua = statusOrangTua,
+                                    mapsLatitude = mapsLatitude,
+                                    mapsLongitude = mapsLongitude,
+                                    idRecipient = it.id
+                                )
+                            }
+                            proposalViewModel.createProposal(proposal!!, recipientData.id) { proposal ->
+                                onNextStepWithData(proposal)
+                            }
                         }
                     )
                 }
@@ -482,21 +482,4 @@ fun CustomDatePickerDialog(
     ) {
         DatePicker(state = state)
     }
-}
-
-private fun addProposal(
-    proposal: Proposal,
-    onNext: (String) -> Unit,
-    proposalRepository: ProposalRepository,
-    onError: (String) -> Unit
-) {
-    proposalRepository.createProposal(
-        proposal,
-        onSuccess = {
-            onNext("Data individu berhasil ditambahkan")
-        },
-        onFailure = { errorMessage ->
-            onError(errorMessage ?: "Gagal menambahkan data individu")
-        }
-    )
 }

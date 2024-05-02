@@ -20,4 +20,5 @@ data class Individual(
     val kecamatan: String,
     val kelurahan: String,
     val lingkungan: String,
+    val idRecipient: String,
 ) : Parcelable
