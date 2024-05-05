@@ -71,6 +71,8 @@ fun Proposal4Form(
     innerPadding: PaddingValues,
     proposalViewModel: ProposalViewModel,
     recipientData: Recipient?,
+    individualData: String,
+    surveyData: String,
     onNextStepWithData: (Proposal) -> Unit
 ) {
 //    var text by remember { mutableStateOf(proposal4Data) }
@@ -445,11 +447,13 @@ fun Proposal4Form(
                                     statusOrangTua = statusOrangTua,
                                     mapsLatitude = mapsLatitude,
                                     mapsLongitude = mapsLongitude,
-                                    idRecipient = it.id
+                                    idRecipient = it.id,
+                                    idIndividual = individualData,
+                                    idSurvey = surveyData
                                 )
                             }
-                            proposalViewModel.createProposal(proposal!!, recipientData.id) { proposal ->
-                                onNextStepWithData(proposal)
+                            proposalViewModel.createProposal(proposal!!, recipientData.id) { proposalItem ->
+                                onNextStepWithData(proposalItem)
                             }
                         }
                     )

@@ -55,7 +55,7 @@ fun Proposal3Form(
     innerPadding: PaddingValues,
     surveyViewModel: SurveyViewModel,
     recipientData: Recipient?,
-    onNextStepWithData: (SurveyType) -> Unit
+    onNextStepWithData: (String) -> Unit
 ) {
 
     val options = listOf("YA", "TIDAK")
@@ -853,8 +853,8 @@ fun Proposal3Form(
                                 idRecipient = it.id
                             )
                         }
-                        surveyViewModel.createSurveyType(surveyTypeData!!, recipientData.id) { survey ->
-                            onNextStepWithData(survey)
+                        surveyViewModel.createSurveyType(surveyTypeData!!, recipientData.id) { surveyId ->
+                            onNextStepWithData(surveyId)
                         }
                     }
                 )

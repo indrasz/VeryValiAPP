@@ -69,6 +69,7 @@ class RecipientRepository {
                     val statusDTKS = document.getString("STATUS DTKS") ?: ""
                     val tanggalLahirString = document.getString("TANGGAL LAHIR") ?: ""
                     val umur = document.getString("UMUR") ?: ""
+                    val id = document.id
 
                     // Parse tanggal lahir dari string ke tipe Date
                     val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -88,7 +89,8 @@ class RecipientRepository {
                         nik = nik,
                         statusDTKS = statusDTKS,
                         tanggalLahir = tanggalLahirString,
-                        umur = umur
+                        umur = umur,
+                        id = id
                     )
                     recipientsList.add(recipient)
                 }

@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -30,7 +31,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,6 +46,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,9 +66,14 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.veryvali.R
+import com.example.veryvali.data.model.Proposal
 import com.example.veryvali.data.model.Recipient
+import com.example.veryvali.data.model.Response
+import com.example.veryvali.di.ResponseViewModel
+import com.example.veryvali.di.SurveyViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -101,7 +111,13 @@ fun ResponseScreen(navController: NavHostController, recipient: Recipient)  {
 @Composable
 fun ResponseContent(innerPadding: PaddingValues, navController: NavHostController, recipient: Recipient) {
 
-    var text by remember { mutableStateOf("") }
+//    var text by remember { mutableStateOf("") }
+
+    val responseViewModel: ResponseViewModel = viewModel()
+    var statusKelayakan by remember { mutableStateOf(false) }
+    var alasan by remember { mutableStateOf("") }
+    var catatan by remember { mutableStateOf("") }
+    val isLoading by responseViewModel.loadingState.collectAsState()
 
     LazyColumn(
         modifier = Modifier
@@ -214,15 +230,35 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
                         style = TextStyle(fontSize = 14.sp)
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-                    Image(
-                        painter = painterResource(id = R.drawable.img_sad),
-                        contentDescription = "Hero Image",
+                    Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                    )
+                            .background(color = if (statusKelayakan) Color.Green else Color.Red, shape = RoundedCornerShape(50))
+                            .padding(16.dp)
+                    ) {
+                        IconButton(
+                            onClick = { statusKelayakan = !statusKelayakan },
+                            modifier = Modifier.padding(8.dp)
+                        ) {
+                            if (statusKelayakan) {
+                                Icon(
+                                    Icons.Filled.Check,
+                                    contentDescription = "Checked Icon",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(80.dp)
+                                )
+                            } else {
+                                Icon(
+                                    Icons.Filled.Close,
+                                    contentDescription = "Close Icon",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(80.dp)
+                                )
+                            }
+                        }
+                    }
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "Tidak layak sebagai penerima manfaat",
+                        text =( if (statusKelayakan) "Layak sebagai penerima manfaat" else "Tidak layak sebagai penerima manfaat"),
                         modifier = Modifier
                             .padding(bottom = 8.dp),
                         fontWeight = FontWeight.Light,
@@ -248,8 +284,8 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
                         )
 
                         OutlinedTextField(
-                            value = text,
-                            onValueChange = { text = it },
+                            value = alasan,
+                            onValueChange = { alasan = it },
                             colors = OutlinedTextFieldDefaults.colors(
                                 unfocusedTextColor = Color.Black,
                                 unfocusedBorderColor = Color.Black,
@@ -281,8 +317,8 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
                         )
 
                         OutlinedTextField(
-                            value = text,
-                            onValueChange = { text = it },
+                            value = catatan,
+                            onValueChange = { catatan = it },
                             colors = OutlinedTextFieldDefaults.colors(
                                 unfocusedTextColor = Color.Black,
                                 unfocusedBorderColor = Color.Black,
@@ -391,91 +427,100 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
                     }
                 }
             }
-
-
             Spacer(modifier = Modifier.height(16.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                CustomButton(
-                    text = "Kirim Tanggapan",
-                    fullWidth = false,
-                    onClick = {
-                        navController.navigate("success")
-                    }
-                )
-            }
-        }
-    }
-}
-
-private const val IMAGE_REQUEST_CODE = 123
-
-@Composable
-fun ImageInputBox(
-    modifier: Modifier = Modifier,
-    initialImage: ImageBitmap? = null,
-    onImageSelected: (ImageBitmap) -> Unit
-) {
-    var imageBitmap by remember { mutableStateOf(initialImage) }
-    val context = LocalContext.current
-
-    Box(
-        modifier = modifier
-            .size(56.dp)
-            .background(color = Color.White)
-            .border(
-                width = 1.dp,
-                color = Color.Black,
-                shape = RoundedCornerShape(16.dp)
-            )
-            .clickable {
-                // Handle image selection
-                val intent = Intent(Intent.ACTION_GET_CONTENT)
-                intent.type = "image/*"
-                val activity = context as? Activity
-                activity?.startActivityForResult(intent, IMAGE_REQUEST_CODE)
-            }
-    ) {
-        if (imageBitmap != null) {
-            Image(
-                bitmap = imageBitmap!!,
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.FillBounds
-            )
-        } else {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Add Icon",
-                tint = Color.Black,
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }
-    }
-
-    // Handle result of image selection
-    val activityResultLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val intent = result.data
-                intent?.data?.let { uri ->
-                    val bitmap = uri.toBitmap(context)
-                    imageBitmap = bitmap
-                    onImageSelected(bitmap)
+                if (isLoading) {
+                    CircularProgressIndicator() // Loading indicator
+                } else {
+                    CustomButton(
+                        text = "Kirim Tanggapan",
+                        fullWidth = false,
+                        onClick = {
+                            val response = Response(
+                                statusKelayakan = statusKelayakan,
+                                alasan = alasan,
+                                catatan = catatan,
+                                idRecipient = recipient.id
+                            )
+                            responseViewModel.createResponseWithRecipientId(response, recipient.id)
+                            navController.navigate("success")
+                        }
+                    )
                 }
             }
         }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            activityResultLauncher.unregister()
-        }
     }
 }
 
-private fun Uri.toBitmap(context: Context): ImageBitmap {
-    val inputStream = context.contentResolver.openInputStream(this)
-    return BitmapFactory.decodeStream(inputStream).asImageBitmap()
-}
+//private const val IMAGE_REQUEST_CODE = 123
+
+//@Composable
+//fun ImageInputBox(
+//    modifier: Modifier = Modifier,
+//    initialImage: ImageBitmap? = null,
+//    onImageSelected: (ImageBitmap) -> Unit
+//) {
+//    var imageBitmap by remember { mutableStateOf(initialImage) }
+//    val context = LocalContext.current
+//
+//    Box(
+//        modifier = modifier
+//            .size(56.dp)
+//            .background(color = Color.White)
+//            .border(
+//                width = 1.dp,
+//                color = Color.Black,
+//                shape = RoundedCornerShape(16.dp)
+//            )
+//            .clickable {
+//                // Handle image selection
+//                val intent = Intent(Intent.ACTION_GET_CONTENT)
+//                intent.type = "image/*"
+//                val activity = context as? Activity
+//                activity?.startActivityForResult(intent, IMAGE_REQUEST_CODE)
+//            }
+//    ) {
+//        if (imageBitmap != null) {
+//            Image(
+//                bitmap = imageBitmap!!,
+//                contentDescription = null,
+//                modifier = Modifier.fillMaxSize(),
+//                contentScale = ContentScale.FillBounds
+//            )
+//        } else {
+//            Icon(
+//                imageVector = Icons.Default.Add,
+//                contentDescription = "Add Icon",
+//                tint = Color.Black,
+//                modifier = Modifier.align(Alignment.Center)
+//            )
+//        }
+//    }
+//
+//    // Handle result of image selection
+//    val activityResultLauncher =
+//        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+//            if (result.resultCode == Activity.RESULT_OK) {
+//                val intent = result.data
+//                intent?.data?.let { uri ->
+//                    val bitmap = uri.toBitmap(context)
+//                    imageBitmap = bitmap
+//                    onImageSelected(bitmap)
+//                }
+//            }
+//        }
+//
+//    DisposableEffect(Unit) {
+//        onDispose {
+//            activityResultLauncher.unregister()
+//        }
+//    }
+//}
+//
+//private fun Uri.toBitmap(context: Context): ImageBitmap {
+//    val inputStream = context.contentResolver.openInputStream(this)
+//    return BitmapFactory.decodeStream(inputStream).asImageBitmap()
+//}

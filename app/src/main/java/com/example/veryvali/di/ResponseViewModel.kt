@@ -1,40 +1,39 @@
 package com.example.veryvali.di
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.veryvali.data.model.Individual
-import com.example.veryvali.data.model.Recipient
-import com.example.veryvali.data.repository.IndividualRepository
-import com.example.veryvali.data.repository.RecipientRepository
+import com.example.veryvali.data.model.Response
+import com.example.veryvali.data.repository.ResponseRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class IndividualViewModel : ViewModel() {
+class ResponseViewModel : ViewModel() {
 
-    private val individualRepository = IndividualRepository()
+    private val responseRepository = ResponseRepository()
 
     private val _loadingState = MutableStateFlow(false)
     val loadingState: StateFlow<Boolean> = _loadingState
 
-    fun createIndividualWithRecipientId(
-        individual: Individual,
+    fun createResponseWithRecipientId(
+        response: Response,
         recipientId: String,
-        onNext: (String) -> Unit
     ) {
         _loadingState.value = true // Set loading state menjadi true saat operasi dimulai
 
         viewModelScope.launch {
-            individualRepository.createIndividualWithRecipientId(
-                individual,
+            responseRepository.createResponseWithRecipientId(
+                response,
                 recipientId,
-                onSuccess = { documentId ->
+                onSuccess = {
                     _loadingState.value = false // Set loading state menjadi false saat operasi selesai
-                    onNext(documentId)
+//                    onNext()
                 },
-                onFailure = {
+                onFailure = {errorMessage ->
                     _loadingState.value = false // Set loading state menjadi false saat operasi selesai
                     // Handle failure if needed
+                    Log.e("ResponseViewModel", "Failed to create response: $errorMessage")
                 }
             )
         }

@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
         val viewModel: RecipientsViewModel = viewModel()
 //        val recipientsState by viewModel.recipientsState.collectAsState()
 
-        NavHost(navController = navController, startDestination = "main"){
+        NavHost(navController = navController, startDestination = "home"){
             composable("main"){
                 MainScreen(navController = navController)
             }

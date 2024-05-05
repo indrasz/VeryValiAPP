@@ -41,6 +41,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.veryvali.data.model.Individual
 import com.example.veryvali.data.model.Recipient
+import com.example.veryvali.data.model.SurveyType
 import com.example.veryvali.data.repository.IndividualRepository
 import com.example.veryvali.data.repository.ProposalRepository
 import com.example.veryvali.data.repository.SurveyRepository
@@ -61,9 +62,8 @@ fun ProposalScreen(navController: NavHostController) {
     var currentStep by remember { mutableIntStateOf(1) }
 
     var recipientData by remember { mutableStateOf<Recipient?>(null) }
-    var proposal2Data by remember { mutableStateOf<Individual?>(null)}
-    var proposal3Data by remember { mutableStateOf("") }
-    var proposal4Data by remember { mutableStateOf("") }
+    var individualData by remember { mutableStateOf("")}
+    var surveyData by remember { mutableStateOf("") }
 
     val proposalViewModel: ProposalViewModel = viewModel()
     val individualViewModel: IndividualViewModel = viewModel()
@@ -117,18 +117,19 @@ fun ProposalScreen(navController: NavHostController) {
                     }
                 }
                 2 -> {
-                    Proposal2Form(individualViewModel, recipientData) {
-//                        proposal2Data = individual
+                    Proposal2Form(individualViewModel, recipientData) {individualId ->
+                        individualData = individualId
                         currentStep++
                     }
                 }
                 3 -> {
-                    Proposal3Form(innerPadding, surveyViewModel, recipientData) {
+                    Proposal3Form(innerPadding, surveyViewModel, recipientData) { surveyId ->
+                        surveyData = surveyId
                         currentStep++
                     }
                 }
                 4 -> {
-                    Proposal4Form(innerPadding, proposalViewModel, recipientData) {
+                    Proposal4Form(innerPadding, proposalViewModel, recipientData, individualData, surveyData) {
                         currentStep++
                     }
                 }

@@ -13,7 +13,7 @@ class SurveyRepository {
     fun createSurveyType(
         surveyType: SurveyType,
         recipientId: String,
-        onSuccess: () -> Unit,
+        onSuccess: (String) -> Unit,
         onFailure: (String) -> Unit
     ) {
         recipientCollection.document(recipientId).get()
@@ -22,8 +22,8 @@ class SurveyRepository {
                     // Penerima ditemukan, buat data individu
                     surveyCollection
                         .add(surveyType.copy(idRecipient = recipientId)) // Set idRecipient dari individual
-                        .addOnSuccessListener {
-                            onSuccess()
+                        .addOnSuccessListener { documentId ->
+                            onSuccess(documentId.id)
                         }
                         .addOnFailureListener { e ->
                             onFailure(e.message ?: "Failed to create individual data.")

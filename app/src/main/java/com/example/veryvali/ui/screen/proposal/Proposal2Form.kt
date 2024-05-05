@@ -51,7 +51,7 @@ import com.example.veryvali.di.IndividualViewModel
 fun Proposal2Form(
     individualViewModel: IndividualViewModel,
     recipientData: Recipient?,
-    onNextStepWithData: (Individual) -> Unit,
+    onNextStepWithData: (String) -> Unit,
 ) {
     var noKK by remember { mutableStateOf("") }
     var nik by remember { mutableStateOf("") }
@@ -796,7 +796,7 @@ fun Proposal2Form(
                                 kecamatan = kecamatan,
                                 kelurahan = kelurahan,
                                 lingkungan = lingkungan,
-                                idRecipient = it.id
+                                idRecipient = it.id,
                             )
                         }
                         individualViewModel.createIndividualWithRecipientId(individualData!!, recipientData.id) { individual ->

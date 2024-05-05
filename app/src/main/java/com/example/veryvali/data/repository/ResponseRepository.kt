@@ -1,32 +1,31 @@
 package com.example.veryvali.data.repository
 
-import com.example.veryvali.data.model.Individual
-import com.example.veryvali.data.model.Recipient
+import com.example.veryvali.data.model.Response
 import com.google.firebase.firestore.FirebaseFirestore
 
-class IndividualRepository {
+class ResponseRepository {
     private val db = FirebaseFirestore.getInstance()
-    private val individualCollection = db.collection("individuals")
+    private val responseCollection = db.collection("responses")
     private val recipientCollection = db.collection("recipients")
 
-    fun createIndividualWithRecipientId(
-        individual: Individual,
+    fun createResponseWithRecipientId(
+        response: Response,
         recipientId: String,
-        onSuccess: (String) -> Unit,
+        onSuccess: () -> Unit,
         onFailure: (String) -> Unit
     ) {
-        // Cek apakah penerima dengan ID yang diberikan ada
+        // Check if recipient with given ID exists
         recipientCollection.document(recipientId).get()
             .addOnSuccessListener { recipientDocument ->
                 if (recipientDocument.exists()) {
-                    // Penerima ditemukan, buat data individu
-                    individualCollection
-                        .add(individual.copy(idRecipient = recipientId)) // Set idRecipient dari individual
-                        .addOnSuccessListener { documentId ->
-                            onSuccess(documentId.id)
+                    // Recipient found, create response data
+                    responseCollection
+                        .add(response.copy(idRecipient = recipientId)) // Set idRecipient of the response
+                        .addOnSuccessListener {
+                            onSuccess()
                         }
                         .addOnFailureListener { e ->
-                            onFailure(e.message ?: "Failed to create individual data.")
+                            onFailure(e.message ?: "Failed to create response data.")
                         }
                 } else {
                     onFailure("Recipient with ID $recipientId does not exist.")

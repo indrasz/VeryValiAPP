@@ -19,7 +19,7 @@ class SurveyViewModel : ViewModel() {
     fun createSurveyType(
         surveyType: SurveyType,
         recipientId: String,
-        onNext: (SurveyType) -> Unit
+        onNext: (String) -> Unit
     ) {
         _loadingState.value = true // Set loading state menjadi true saat operasi dimulai
 
@@ -27,9 +27,9 @@ class SurveyViewModel : ViewModel() {
             surveyRepository.createSurveyType(
                 surveyType,
                 recipientId,
-                onSuccess = {
+                onSuccess = { documentId ->
                     _loadingState.value = false // Set loading state menjadi false saat operasi selesai
-                    onNext(surveyType)
+                    onNext(documentId)
                 },
                 onFailure = {
                     _loadingState.value = false // Set loading state menjadi false saat operasi selesai

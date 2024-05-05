@@ -12,4 +12,6 @@ data class Proposal(
     val mapsLatitude: String,
     val mapsLongitude: String,
     val idRecipient: String,
+    val idIndividual: String,
+    val idSurvey: String
 ) : Parcelable
