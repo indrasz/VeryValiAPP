@@ -119,6 +119,9 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
     var catatan by remember { mutableStateOf("") }
     val isLoading by responseViewModel.loadingState.collectAsState()
 
+    var selectedFirstImageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
+    var selectedSecondImageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -130,7 +133,7 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(color = Color(0xFFA6D4FD), shape = RoundedCornerShape(24.dp))
+                    .background(color = Color(0xFF0E7CDA), shape = RoundedCornerShape(24.dp))
                     .padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
                 Row (
@@ -371,7 +374,25 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
                                     style = TextStyle(fontSize = 14.sp)
                                 )
 
-                                Box(
+//                                Box(
+//                                    modifier = Modifier
+//                                        .size(100.dp)
+//                                        .background(color = Color(0xFFFFFFFF))
+//                                        .border(
+//                                            width = 1.dp,
+//                                            color = Color.Black,
+//                                            shape = RoundedCornerShape(16.dp)
+//                                        )
+//                                ) {
+//                                    Icon(
+//                                        imageVector = Icons.Default.Add,
+//                                        contentDescription = "Add Icon",
+//                                        tint = Color.Black,
+//                                        modifier = Modifier.align(Alignment.Center)
+//                                    )
+//                                }
+//                                ImageInputBox(modifier = Modifier.padding(2.dp), )
+                                ImageInputBox(
                                     modifier = Modifier
                                         .size(100.dp)
                                         .background(color = Color(0xFFFFFFFF))
@@ -379,15 +400,12 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
                                             width = 1.dp,
                                             color = Color.Black,
                                             shape = RoundedCornerShape(16.dp)
-                                        )
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Add,
-                                        contentDescription = "Add Icon",
-                                        tint = Color.Black,
-                                        modifier = Modifier.align(Alignment.Center)
-                                    )
-                                }
+                                        ),
+                                    initialImage = selectedFirstImageBitmap,
+                                    onImageSelected = { imageBitmap ->
+                                        selectedFirstImageBitmap = imageBitmap
+                                    }
+                                )
 
                             }
                             Column(
@@ -403,8 +421,7 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
                                     fontWeight = FontWeight.Light,
                                     style = TextStyle(fontSize = 14.sp)
                                 )
-
-                                Box(
+                                ImageInputBox(
                                     modifier = Modifier
                                         .size(100.dp)
                                         .background(color = Color(0xFFFFFFFF))
@@ -412,15 +429,12 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
                                             width = 1.dp,
                                             color = Color.Black,
                                             shape = RoundedCornerShape(16.dp)
-                                        )
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Add,
-                                        contentDescription = "Add Icon",
-                                        tint = Color.Black,
-                                        modifier = Modifier.align(Alignment.Center)
-                                    )
-                                }
+                                        ),
+                                    initialImage = selectedSecondImageBitmap,
+                                    onImageSelected = { imageBitmap ->
+                                        selectedSecondImageBitmap = imageBitmap
+                                    }
+                                )
 
                             }
                         }
@@ -443,9 +457,9 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
                                 statusKelayakan = statusKelayakan,
                                 alasan = alasan,
                                 catatan = catatan,
-                                idRecipient = recipient.id
+                                idRecipient = recipient.nik
                             )
-                            responseViewModel.createResponseWithRecipientId(response, recipient.id)
+                            responseViewModel.createResponseWithRecipientId(response, recipient.nik)
                             navController.navigate("success")
                         }
                     )
@@ -457,70 +471,56 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
 
 //private const val IMAGE_REQUEST_CODE = 123
 
-//@Composable
-//fun ImageInputBox(
-//    modifier: Modifier = Modifier,
-//    initialImage: ImageBitmap? = null,
-//    onImageSelected: (ImageBitmap) -> Unit
-//) {
-//    var imageBitmap by remember { mutableStateOf(initialImage) }
-//    val context = LocalContext.current
-//
-//    Box(
-//        modifier = modifier
-//            .size(56.dp)
-//            .background(color = Color.White)
-//            .border(
-//                width = 1.dp,
-//                color = Color.Black,
-//                shape = RoundedCornerShape(16.dp)
-//            )
-//            .clickable {
-//                // Handle image selection
-//                val intent = Intent(Intent.ACTION_GET_CONTENT)
-//                intent.type = "image/*"
-//                val activity = context as? Activity
-//                activity?.startActivityForResult(intent, IMAGE_REQUEST_CODE)
-//            }
-//    ) {
-//        if (imageBitmap != null) {
-//            Image(
-//                bitmap = imageBitmap!!,
-//                contentDescription = null,
-//                modifier = Modifier.fillMaxSize(),
-//                contentScale = ContentScale.FillBounds
-//            )
-//        } else {
-//            Icon(
-//                imageVector = Icons.Default.Add,
-//                contentDescription = "Add Icon",
-//                tint = Color.Black,
-//                modifier = Modifier.align(Alignment.Center)
-//            )
-//        }
-//    }
-//
-//    // Handle result of image selection
-//    val activityResultLauncher =
-//        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-//            if (result.resultCode == Activity.RESULT_OK) {
-//                val intent = result.data
-//                intent?.data?.let { uri ->
-//                    val bitmap = uri.toBitmap(context)
-//                    imageBitmap = bitmap
-//                    onImageSelected(bitmap)
-//                }
-//            }
-//        }
-//
-//    DisposableEffect(Unit) {
-//        onDispose {
-//            activityResultLauncher.unregister()
-//        }
-//    }
-//}
-//
-//private fun Uri.toBitmap(context: Context): ImageBitmap {
-//    val inputStream = context.contentResolver.openInputStream(this)
-//    return BitmapFactory.decodeStream(inputStream).asImageBitmap()
-//}
+@Composable
+fun ImageInputBox(
+    modifier: Modifier = Modifier,
+    initialImage: ImageBitmap? = null,
+    onImageSelected: (ImageBitmap) -> Unit
+) {
+    var imageBitmap by remember { mutableStateOf(initialImage) }
+    val context = LocalContext.current
+
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let {
+            val bitmap = uri.toBitmap(context)
+            imageBitmap = bitmap
+            onImageSelected(bitmap)
+        }
+    }
+
+    Box(
+        modifier = modifier
+            .size(120.dp)
+            .background(color = Color.White)
+            .border(
+                width = 1.dp,
+                color = Color.Black,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .clickable {
+                launcher.launch("image/*")
+            }
+    ) {
+        if (imageBitmap != null) {
+            Image(
+                bitmap = imageBitmap!!,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add Icon",
+                tint = Color.Black,
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+    }
+}
+
+private fun Uri.toBitmap(context: Context): ImageBitmap {
+    val inputStream = context.contentResolver.openInputStream(this)
+    return BitmapFactory.decodeStream(inputStream)?.asImageBitmap()
+        ?: throw IllegalArgumentException("Failed to load bitmap from URI: $this")
+}

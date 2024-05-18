@@ -20,22 +20,22 @@ class RecipientRepository {
                 if (!documents.isEmpty) {
                     // Data dengan NIK yang sesuai ditemukan
                     val document = documents.first()
-                    val recipient = Recipient(
-                        alamat = document.getString("ALAMAT") ?: "",
-                        bansos = document.getString("BANSOS") ?: "",
-                        desa = document.getString("DESA") ?: "",
-                        idBansos = document.getString("ID BANSOS") ?: "",
-                        kabupaten = document.getString("KABUPATEN") ?: "",
-                        kecamatan = document.getString("KECAMATAN") ?: "",
-                        nama = document.getString("NAMA") ?: "",
-                        nik = document.getString("NIK") ?: "",
-                        statusDTKS = document.getString("STATUS DTKS") ?: "",
-                        tanggalLahir = document.getString("TANGGAL LAHIR") ?: "",
-                        umur = document.getString("UMUR") ?: "",
-                        id = document.id,
-                    )
-                    Log.d("Recipient Data from repository", "$recipient")
-                    onSuccess(recipient)
+//                    val recipient = Recipient(
+//                        alamat = document.getString("ALAMAT") ?: "",
+//                        bansos = document.getString("BANSOS") ?: "",
+//                        desa = document.getString("DESA") ?: "",
+////                        idBansos = document.getString("ID BANSOS") ?: "",
+//                        kabupaten = document.getString("KABUPATEN") ?: "",
+//                        kecamatan = document.getString("KECAMATAN") ?: "",
+//                        nama = document.getString("NAMA") ?: "",
+//                        nik = document.getString("NIK") ?: "",
+//                        statusDTKS = document.getString("STATUS DTKS") ?: "",
+//                        tanggalLahir = document.getString("TANGGAL LAHIR") ?: "",
+//                        umur = document.getString("UMUR") ?: "",
+//                        id = document.id,
+//                    )
+//                    Log.d("Recipient Data from repository", "$recipient")
+//                    onSuccess(recipient)
                 } else {
                     // Data dengan NIK yang sesuai tidak ditemukan
                     onFailure()
@@ -71,28 +71,22 @@ class RecipientRepository {
                     val umur = document.getString("UMUR") ?: ""
                     val id = document.id
 
-                    // Parse tanggal lahir dari string ke tipe Date
                     val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-//                    val tanggalLahir = try {
-//                        dateFormat.parse(tanggalLahirString)
-//                    } catch (e: ParseException) {
-//                        Date()
-//                    }
-                    val recipient = Recipient(
-                        alamat = alamat,
-                        bansos = bansos,
-                        desa = desa,
-                        idBansos = idBansos,
-                        kabupaten = kabupaten,
-                        kecamatan = kecamatan,
-                        nama = nama,
-                        nik = nik,
-                        statusDTKS = statusDTKS,
-                        tanggalLahir = tanggalLahirString,
-                        umur = umur,
-                        id = id
-                    )
-                    recipientsList.add(recipient)
+//                    val recipient = Recipient(
+//                        alamat = alamat,
+//                        bansos = bansos,
+//                        desa = desa,
+////                        idBansos = idBansos,
+//                        kabupaten = kabupaten,
+//                        kecamatan = kecamatan,
+//                        nama = nama,
+//                        nik = nik,
+//                        statusDTKS = statusDTKS,
+//                        tanggalLahir = tanggalLahirString,
+//                        umur = umur,
+//                        id = id
+//                    )
+//                    recipientsList.add(recipient)
                 }
                 onSuccess(recipientsList)
             }

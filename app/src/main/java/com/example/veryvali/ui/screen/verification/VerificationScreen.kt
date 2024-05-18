@@ -28,6 +28,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -35,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,6 +59,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.veryvali.data.model.Recipient
 import com.example.veryvali.data.repository.RecipientRepository
+import com.example.veryvali.di.BansosViewModel
+import com.example.veryvali.di.ProposalViewModel
 import com.example.veryvali.di.RecipientsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -93,26 +97,10 @@ fun VerificationScreen(navController: NavHostController)  {
 @Composable
 fun ScrollContent(innerPadding: PaddingValues, navController: NavHostController) {
 
-    val viewModel: RecipientsViewModel = viewModel()
+    val viewModel: BansosViewModel = viewModel()
     val recipientsState by viewModel.recipientsState.collectAsState()
-    Log.d("ScrollContent", "Recipients state UI: $recipientsState")
-
     var search by remember { mutableStateOf("") }
     var text by remember { mutableStateOf("") }
-
-    // Filter daftar penerima berdasarkan pencarian
-    val filteredRecipients = recipientsState.let { state ->
-        when (state) {
-            is RecipientsViewModel.RecipientsState.Success -> {
-                val searchQuery = search.lowercase()
-                state.recipients.filter { recipient ->
-                    recipient.nama.lowercase().contains(searchQuery)
-                }
-            }
-            else -> emptyList()
-        }
-    }
-
 
     Column(
         modifier = Modifier
@@ -215,7 +203,7 @@ fun ScrollContent(innerPadding: PaddingValues, navController: NavHostController)
         Spacer(modifier = Modifier.height(12.dp))
 
         when (val state = recipientsState) {
-            is RecipientsViewModel.RecipientsState.Loading -> {
+            is BansosViewModel.BansosState.Loading -> {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
@@ -223,22 +211,23 @@ fun ScrollContent(innerPadding: PaddingValues, navController: NavHostController)
                     CircularProgressIndicator()
                 }
             }
-            is RecipientsViewModel.RecipientsState.Error -> {
+            is BansosViewModel.BansosState.Error -> {
                 Text(
                     text = state.message,
                 )
             }
-            is RecipientsViewModel.RecipientsState.Success -> {
-                filteredRecipients.let { recipients ->
-                    recipients.forEach { recipient ->
+            is BansosViewModel.BansosState.Success -> {
+//                filteredRecipients.let { recipients ->
+                    state.recipients.forEach { recipient ->
                         RecipientListItem(recipient = recipient, navController = navController)
                         Spacer(modifier = Modifier.height(12.dp))
                     }
-                }
+//                }
             }
         }
 
     }
+
 }
 
 @Composable
@@ -282,11 +271,12 @@ fun RecipientListItem(recipient: Recipient, navController: NavHostController) {
 //    val bundle = Bundle().apply {
 //        putParcelable("recipient", recipient)
 //    }
+    val proposalViewModel: ProposalViewModel = viewModel()
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = Color(0xFFA6D4FD), shape = RoundedCornerShape(24.dp))
+            .background(color = Color(0xFF0E7CDA), shape = RoundedCornerShape(24.dp))
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
         Row(
@@ -839,11 +829,11 @@ fun RecipientListItem(recipient: Recipient, navController: NavHostController) {
         }
 
         Column(
-
             modifier = Modifier
                 .pointerInput(Unit) {
                     detectTapGestures {
-                        navController.navigate("response/${recipient.nik}" )
+                        proposalViewModel.createNIK(recipient.nik)
+                        navController.navigate("response/${recipient.id}")
                     }
                 }
                 .fillMaxSize()

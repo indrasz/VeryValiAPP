@@ -21,6 +21,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.veryvali.di.BansosViewModel
 import com.example.veryvali.di.RecipientsViewModel
 import com.example.veryvali.ui.screen.login.LoginScreen
 import com.example.veryvali.ui.screen.MainScreen
@@ -53,7 +54,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun ComposeNavigation() {
         val navController = rememberNavController()
-        val viewModel: RecipientsViewModel = viewModel()
+        val viewModel: BansosViewModel = viewModel()
 //        val recipientsState by viewModel.recipientsState.collectAsState()
 
         NavHost(navController = navController, startDestination = "home"){
@@ -80,10 +81,10 @@ class MainActivity : ComponentActivity() {
             }
             composable("response/{recipientId}",
                 arguments = listOf(navArgument("recipientId") { type = NavType.StringType })) { backStackEntry ->
-                val recipientNIK = backStackEntry.arguments?.getString("recipientId")
+                val recipientId = backStackEntry.arguments?.getString("recipientId")
                 val recipient = viewModel.recipientsState.value.let { state ->
-                    if (state is RecipientsViewModel.RecipientsState.Success) {
-                        state.recipients.find { it.nik == recipientNIK }
+                    if (state is BansosViewModel.BansosState.Success) {
+                        state.recipients.find { it.id == recipientId }
                     } else {
                         null
                     }

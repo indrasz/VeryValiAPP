@@ -452,7 +452,7 @@ fun Proposal4Form(
                                     idSurvey = surveyData
                                 )
                             }
-                            proposalViewModel.createProposal(proposal!!, recipientData.id) { proposalItem ->
+                            proposalViewModel.createProposal(proposal!!, recipientData.nik) { proposalItem ->
                                 onNextStepWithData(proposalItem)
                             }
                         }

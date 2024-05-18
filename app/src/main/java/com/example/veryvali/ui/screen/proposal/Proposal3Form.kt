@@ -853,7 +853,7 @@ fun Proposal3Form(
                                 idRecipient = it.id
                             )
                         }
-                        surveyViewModel.createSurveyType(surveyTypeData!!, recipientData.id) { surveyId ->
+                        surveyViewModel.createSurveyType(surveyTypeData!!, recipientData.nik) { surveyId ->
                             onNextStepWithData(surveyId)
                         }
                     }

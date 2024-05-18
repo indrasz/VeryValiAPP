@@ -98,7 +98,7 @@ fun Proposal1Form(
                     onClick = {
                         proposalViewModel.cekDataNIK(nik) { recipient ->
                             onNextStepWithData(recipient)
-//                            Log.d("data recipient proposa","$recipient")
+                            Log.d("data recipient proposal","$recipient")
                         }
                     }
                 )

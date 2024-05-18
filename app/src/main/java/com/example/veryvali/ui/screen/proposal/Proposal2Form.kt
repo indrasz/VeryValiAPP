@@ -799,7 +799,7 @@ fun Proposal2Form(
                                 idRecipient = it.id,
                             )
                         }
-                        individualViewModel.createIndividualWithRecipientId(individualData!!, recipientData.id) { individual ->
+                        individualViewModel.createIndividualWithRecipientId(individualData!!, recipientData.nik) { individual ->
                             onNextStepWithData(individual)
                         }
                     },
