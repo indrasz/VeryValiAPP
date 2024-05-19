@@ -1,11 +1,16 @@
 package com.example.veryvali.ui.screen.response
 
+import android.annotation.SuppressLint
 import com.example.veryvali.ui.components.CustomButton
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Environment
+import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -55,6 +60,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -66,6 +72,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.edit
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.veryvali.R
@@ -74,6 +81,11 @@ import com.example.veryvali.data.model.Recipient
 import com.example.veryvali.data.model.Response
 import com.example.veryvali.di.ResponseViewModel
 import com.example.veryvali.di.SurveyViewModel
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -373,25 +385,6 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
                                     fontWeight = FontWeight.Light,
                                     style = TextStyle(fontSize = 14.sp)
                                 )
-
-//                                Box(
-//                                    modifier = Modifier
-//                                        .size(100.dp)
-//                                        .background(color = Color(0xFFFFFFFF))
-//                                        .border(
-//                                            width = 1.dp,
-//                                            color = Color.Black,
-//                                            shape = RoundedCornerShape(16.dp)
-//                                        )
-//                                ) {
-//                                    Icon(
-//                                        imageVector = Icons.Default.Add,
-//                                        contentDescription = "Add Icon",
-//                                        tint = Color.Black,
-//                                        modifier = Modifier.align(Alignment.Center)
-//                                    )
-//                                }
-//                                ImageInputBox(modifier = Modifier.padding(2.dp), )
                                 ImageInputBox(
                                     modifier = Modifier
                                         .size(100.dp)
@@ -453,14 +446,24 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
                         text = "Kirim Tanggapan",
                         fullWidth = false,
                         onClick = {
-                            val response = Response(
-                                statusKelayakan = statusKelayakan,
-                                alasan = alasan,
-                                catatan = catatan,
-                                idRecipient = recipient.nik
-                            )
-                            responseViewModel.createResponseWithRecipientId(response, recipient.nik)
-                            navController.navigate("success")
+                            selectedFirstImageBitmap?.let { firstBitmap ->
+                                selectedSecondImageBitmap?.let { secondBitmap ->
+                                    val response = Response(
+                                        statusKelayakan = statusKelayakan,
+                                        alasan = alasan,
+                                        catatan = catatan,
+                                        idRecipient = recipient.nik,
+                                    )
+
+                                    responseViewModel.createResponseWithRecipientId(
+                                        response,
+                                        recipient.nik,
+                                        firstBitmap.asAndroidBitmap(),
+                                        secondBitmap.asAndroidBitmap()
+                                    )
+                                    navController.navigate("success")
+                                }
+                            }
                         }
                     )
                 }
@@ -468,6 +471,13 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
         }
     }
 }
+
+//private fun ImageBitmap.asAndroidBitmap(): Bitmap {
+//    // Convert ImageBitmap to Android Bitmap
+//    val androidBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+//    androidBitmap.copyPixelsFromBuffer((this as androidx.compose.ui.graphics.AndroidImageBitmap).buffer)
+//    return androidBitmap
+//}
 
 //private const val IMAGE_REQUEST_CODE = 123
 
@@ -480,11 +490,15 @@ fun ImageInputBox(
     var imageBitmap by remember { mutableStateOf(initialImage) }
     val context = LocalContext.current
 
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        uri?.let {
-            val bitmap = uri.toBitmap(context)
-            imageBitmap = bitmap
-            onImageSelected(bitmap)
+    val imageUri = remember { mutableStateOf<Uri?>(null) }
+
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (success) {
+            imageUri.value?.let { uri ->
+                val bitmap = uri.toBitmap(context)
+                imageBitmap = bitmap
+                onImageSelected(bitmap)
+            }
         }
     }
 
@@ -498,7 +512,9 @@ fun ImageInputBox(
                 shape = RoundedCornerShape(16.dp)
             )
             .clickable {
-                launcher.launch("image/*")
+                val uri = createImageUri(context)
+                imageUri.value = uri
+                launcher.launch(uri)
             }
     ) {
         if (imageBitmap != null) {
@@ -517,6 +533,15 @@ fun ImageInputBox(
             )
         }
     }
+}
+
+private fun createImageUri(context: Context): Uri {
+    val contentValues = ContentValues().apply {
+        put(MediaStore.Images.Media.DISPLAY_NAME, "temp_image_${System.currentTimeMillis()}.jpg")
+        put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+    }
+    return context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+        ?: throw IllegalStateException("Failed to create new MediaStore record.")
 }
 
 private fun Uri.toBitmap(context: Context): ImageBitmap {

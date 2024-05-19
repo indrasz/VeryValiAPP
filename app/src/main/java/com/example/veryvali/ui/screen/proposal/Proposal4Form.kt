@@ -1,10 +1,19 @@
 package com.example.veryvali.ui.screen.proposal
 
+import android.content.ContentValues
+import android.content.Context
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Build
+import android.provider.MediaStore
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import com.example.veryvali.ui.components.CustomButton
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,10 +21,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,6 +34,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AlertDialog
@@ -40,6 +52,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,6 +62,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -61,7 +77,9 @@ import com.example.veryvali.data.model.SurveyType
 import com.example.veryvali.data.repository.ProposalRepository
 import com.example.veryvali.data.repository.SurveyRepository
 import com.example.veryvali.di.ProposalViewModel
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -92,12 +110,20 @@ fun Proposal4Form(
 
     var mapsLatitude by remember { mutableStateOf("") }
     var mapsLongitude by remember { mutableStateOf("") }
-    var tanggalHamil by remember { mutableStateOf("") }
 
     val date = remember { mutableStateOf(LocalDate.now())}
-    val isOpen = remember { mutableStateOf(false)}
 
-    val ctx = LocalContext.current
+
+    var fotoKtp by remember { mutableStateOf<ImageBitmap?>(null) }
+    var fotoRumah by remember { mutableStateOf<ImageBitmap?>(null) }
+
+
+    var tanggalHamil by remember { mutableStateOf("") }
+    val isOpen = remember { mutableStateOf(false) }
+    val selectedDateMillis = remember { mutableStateOf<Long?>(null) }
+
+    val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val context = LocalContext.current
     val isLoading by proposalViewModel.loadingState.collectAsState()
 
     LazyColumn(
@@ -258,12 +284,17 @@ fun Proposal4Form(
 
                     OutlinedTextField(
                         readOnly = true,
-                        value = date.value.format(DateTimeFormatter.ISO_DATE),
+                        value = if (selectedDateMillis.value != null) {
+                            Instant.ofEpochMilli(selectedDateMillis.value!!)
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate()
+                                .format(dateFormatter)
+                        } else "",
                         onValueChange = { tanggalHamil = it },
                         colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedTextColor = Color.White,
+                            unfocusedTextColor = Color.Black,
                             unfocusedBorderColor = Color.Black,
-                            focusedTextColor = Color.White,
+                            focusedTextColor = Color.Black,
                             focusedBorderColor = Color.Black,
                         ),
                         textStyle = TextStyle(color = Color.Black),
@@ -285,16 +316,16 @@ fun Proposal4Form(
                         },
                     )
 
-                    if (isOpen.value) {
-                        CustomDatePickerDialog(
-                            onAccept = {
-                                isOpen.value = false // close dialog
-                            },
-                            onCancel = {
-                                isOpen.value = false //close dialog
-                            }
-                        )
-                    }
+                    CustomDatePickerDialog(
+                        openDialog = isOpen,
+                        onAccept = { dateMillis ->
+                            selectedDateMillis.value = dateMillis
+                        },
+                        onCancel = {
+                            // handle cancel action if needed
+                        }
+                    )
+
                 }
 
                 Column {
@@ -426,6 +457,54 @@ fun Proposal4Form(
                             ),
                     )
                 }
+
+                Column{
+                    Text(
+                        text = "Foto Ktp/KK",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp),
+                        fontWeight = FontWeight.Bold,
+                        style = TextStyle(fontSize = 14.sp)
+                    )
+                    ImageInputBox(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                color = Color(0xFFFFFFFF),
+                                shape = RoundedCornerShape(16.dp)
+                            ),
+                        initialImage = fotoKtp,
+                        onImageSelected = { imageBitmap ->
+                            fotoKtp = imageBitmap
+                        }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Column{
+                    Text(
+                        text = "Foto Rumah",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp),
+                        fontWeight = FontWeight.Bold,
+                        style = TextStyle(fontSize = 14.sp)
+                    )
+                    ImageInputBox(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                color = Color(0xFFFFFFFF),
+                                shape = RoundedCornerShape(16.dp)
+                            ),
+                        initialImage = fotoRumah,
+                        onImageSelected = { imageBitmap ->
+                            fotoRumah = imageBitmap
+                        }
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(16.dp))
             Row(
@@ -466,24 +545,102 @@ fun Proposal4Form(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomDatePickerDialog(
+    openDialog: MutableState<Boolean>,
     onAccept: (Long?) -> Unit,
     onCancel: () -> Unit
 ) {
-    val state = rememberDatePickerState()
+    if (openDialog.value) {
+        val state = rememberDatePickerState()
 
-    DatePickerDialog(
-        onDismissRequest = { },
-        confirmButton = {
-            Button(onClick = { onAccept(state.selectedDateMillis) }) {
-                Text("Accept")
+        DatePickerDialog(
+            onDismissRequest = { openDialog.value = false },
+            confirmButton = {
+                Button(onClick = {
+                    onAccept(state.selectedDateMillis)
+                    openDialog.value = false
+                }) {
+                    Text("Accept")
+                }
+            },
+            dismissButton = {
+                Button(onClick = {
+                    onCancel()
+                    openDialog.value = false
+                }) {
+                    Text("Cancel")
+                }
             }
-        },
-        dismissButton = {
-            Button(onClick = onCancel) {
-                Text("Cancel")
+        ) {
+            DatePicker(state = state)
+        }
+    }
+}
+
+
+@Composable
+fun ImageInputBox(
+    modifier: Modifier = Modifier,
+    initialImage: ImageBitmap? = null,
+    onImageSelected: (ImageBitmap) -> Unit
+) {
+    var imageBitmap by remember { mutableStateOf(initialImage) }
+    val context = LocalContext.current
+
+    val imageUri = remember { mutableStateOf<Uri?>(null) }
+
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (success) {
+            imageUri.value?.let { uri ->
+                val bitmap = uri.toBitmap(context)
+                imageBitmap = bitmap
+                onImageSelected(bitmap)
             }
         }
-    ) {
-        DatePicker(state = state)
     }
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(180.dp)
+            .background(
+                color = Color(0xFFFFFFFF),
+                shape = RoundedCornerShape(16.dp)
+            )
+            .clickable {
+                val uri = createImageUri(context)
+                imageUri.value = uri
+                launcher.launch(uri)
+            }
+    ) {
+        if (imageBitmap != null) {
+            Image(
+                bitmap = imageBitmap!!,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add Icon",
+                tint = Color.Black,
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+    }
+}
+
+private fun createImageUri(context: Context): Uri {
+    val contentValues = ContentValues().apply {
+        put(MediaStore.Images.Media.DISPLAY_NAME, "temp_image_${System.currentTimeMillis()}.jpg")
+        put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+    }
+    return context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+        ?: throw IllegalStateException("Failed to create new MediaStore record.")
+}
+
+private fun Uri.toBitmap(context: Context): ImageBitmap {
+    val inputStream = context.contentResolver.openInputStream(this)
+    return BitmapFactory.decodeStream(inputStream)?.asImageBitmap()
+        ?: throw IllegalArgumentException("Failed to load bitmap from URI: $this")
 }

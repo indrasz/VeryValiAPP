@@ -41,8 +41,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             VeryValiTheme {
-                Surface(modifier = Modifier.fillMaxSize(),
-                    color = Color.White) {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = Color.White
+                ) {
                     ComposeNavigation()
                 }
             }

@@ -1,5 +1,6 @@
 package com.example.veryvali.di
 
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,7 +11,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class ResponseViewModel : ViewModel() {
-
     private val responseRepository = ResponseRepository()
 
     private val _loadingState = MutableStateFlow(false)
@@ -19,20 +19,22 @@ class ResponseViewModel : ViewModel() {
     fun createResponseWithRecipientId(
         response: Response,
         recipientId: String,
+        dataPendukung1: Bitmap,
+        dataPendukung2: Bitmap
     ) {
-        _loadingState.value = true // Set loading state menjadi true saat operasi dimulai
+        _loadingState.value = true
 
         viewModelScope.launch {
             responseRepository.createResponseWithRecipientId(
                 response,
                 recipientId,
+                dataPendukung1,
+                dataPendukung2,
                 onSuccess = {
-                    _loadingState.value = false // Set loading state menjadi false saat operasi selesai
-//                    onNext()
+                    _loadingState.value = false
                 },
-                onFailure = {errorMessage ->
-                    _loadingState.value = false // Set loading state menjadi false saat operasi selesai
-                    // Handle failure if needed
+                onFailure = { errorMessage ->
+                    _loadingState.value = false
                     Log.e("ResponseViewModel", "Failed to create response: $errorMessage")
                 }
             )

@@ -54,12 +54,8 @@ import com.example.veryvali.di.SurveyViewModel
 @Composable
 fun ProposalScreen(navController: NavHostController) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-//    val recipientRepository = RecipientRepository() // Inisialisasi repository di sini
-//    val individualRepository = IndividualRepository() // Inisialisasi repository di sini
-    val surveyRepository = SurveyRepository()
-    val proposalRepository = ProposalRepository()// Inisialisasi repository di sini
 
-    var currentStep by remember { mutableIntStateOf(1) }
+    var currentStep by remember { mutableIntStateOf(4) }
 
     var recipientData by remember { mutableStateOf<Recipient?>(null) }
     var individualData by remember { mutableStateOf("")}

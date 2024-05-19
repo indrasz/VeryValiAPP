@@ -59,13 +59,9 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
-//    implementation(platform("com.google.firebase:firebase-auth:21.0.0")) // Update version if needed
-
-//    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
-
+//    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
     //noinspection UseTomlInstead
-    implementation("com.google.firebase:firebase-analytics")
+//    implementation("com.google.firebase:firebase-analytics")
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.appcompat)
@@ -73,8 +69,12 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.firebase.auth.ktx)
-    implementation(libs.firebase.firestore.ktx)
+    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-storage-ktx")
+//    implementation(libs.firebase.common.ktx)
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
