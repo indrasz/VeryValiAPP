@@ -110,96 +110,96 @@ fun ScrollContent(innerPadding: PaddingValues, navController: NavHostController)
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
     ) {
-        OutlinedTextField(
-            value = search,
-            onValueChange = { search = it },
-            label = { Text("Cari") },
-            shape = RoundedCornerShape(24.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-        )
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = Color(0xFFA6D4FD), shape = RoundedCornerShape(24.dp))
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-
-                Column (modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 2.dp)){
-                    Text(
-                        text = "Kecamatan",
-                        modifier = Modifier
-                            .padding(bottom = 8.dp),
-                        fontWeight = FontWeight.Bold,
-                        style = TextStyle(fontSize = 14.sp)
-                    )
-
-                    OutlinedTextField(
-                        value = text,
-                        onValueChange = { text = it },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedTextColor = Color.White,
-                            unfocusedBorderColor = Color.White,
-                            focusedTextColor = Color.White,
-                            focusedBorderColor = Color.White,
-                        ),
-                        textStyle = TextStyle(color = Color.Black),
-                        singleLine = true,
-                        shape = RoundedCornerShape(16.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp)
-                            .background(
-                                color = Color(0xFFFFFFFF),
-                                shape = RoundedCornerShape(16.dp)
-                            ),
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                        keyboardActions = KeyboardActions(onNext = { /* Handle next action */ })
-                    )
-                }
-                Column(modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 2.dp)) {
-                    Text(
-                        text = "Kelurahan",
-                        modifier = Modifier
-                            .padding(bottom = 8.dp),
-                        fontWeight = FontWeight.Bold,
-                        style = TextStyle(fontSize = 14.sp)
-                    )
-
-                    OutlinedTextField(
-                        value = text,
-                        onValueChange = { text = it },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedTextColor = Color.White,
-                            unfocusedBorderColor = Color.White,
-                            focusedTextColor = Color.White,
-                            focusedBorderColor = Color.White,
-                        ),
-                        textStyle = TextStyle(color = Color.Black),
-                        singleLine = true,
-                        shape = RoundedCornerShape(16.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp)
-                            .background(
-                                color = Color(0xFFFFFFFF),
-                                shape = RoundedCornerShape(16.dp)
-                            ),
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                        keyboardActions = KeyboardActions(onNext = { /* Handle next action */ })
-                    )
-                }
-            }
-        }
+//        OutlinedTextField(
+//            value = search,
+//            onValueChange = { search = it },
+//            label = { Text("Cari") },
+//            shape = RoundedCornerShape(24.dp),
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(bottom = 8.dp),
+//        )
+//        Column(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .background(color = Color(0xFFA6D4FD), shape = RoundedCornerShape(24.dp))
+//                .padding(horizontal = 16.dp, vertical = 12.dp)
+//        ) {
+//            Row(
+//                modifier = Modifier.fillMaxWidth(),
+//                horizontalArrangement = Arrangement.Center
+//            ) {
+//
+//                Column (modifier = Modifier
+//                    .weight(1f)
+//                    .padding(horizontal = 2.dp)){
+//                    Text(
+//                        text = "Kecamatan",
+//                        modifier = Modifier
+//                            .padding(bottom = 8.dp),
+//                        fontWeight = FontWeight.Bold,
+//                        style = TextStyle(fontSize = 14.sp)
+//                    )
+//
+//                    OutlinedTextField(
+//                        value = text,
+//                        onValueChange = { text = it },
+//                        colors = OutlinedTextFieldDefaults.colors(
+//                            unfocusedTextColor = Color.White,
+//                            unfocusedBorderColor = Color.White,
+//                            focusedTextColor = Color.White,
+//                            focusedBorderColor = Color.White,
+//                        ),
+//                        textStyle = TextStyle(color = Color.Black),
+//                        singleLine = true,
+//                        shape = RoundedCornerShape(16.dp),
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(bottom = 8.dp)
+//                            .background(
+//                                color = Color(0xFFFFFFFF),
+//                                shape = RoundedCornerShape(16.dp)
+//                            ),
+//                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+//                        keyboardActions = KeyboardActions(onNext = { /* Handle next action */ })
+//                    )
+//                }
+//                Column(modifier = Modifier
+//                    .weight(1f)
+//                    .padding(horizontal = 2.dp)) {
+//                    Text(
+//                        text = "Kelurahan",
+//                        modifier = Modifier
+//                            .padding(bottom = 8.dp),
+//                        fontWeight = FontWeight.Bold,
+//                        style = TextStyle(fontSize = 14.sp)
+//                    )
+//
+//                    OutlinedTextField(
+//                        value = text,
+//                        onValueChange = { text = it },
+//                        colors = OutlinedTextFieldDefaults.colors(
+//                            unfocusedTextColor = Color.White,
+//                            unfocusedBorderColor = Color.White,
+//                            focusedTextColor = Color.White,
+//                            focusedBorderColor = Color.White,
+//                        ),
+//                        textStyle = TextStyle(color = Color.Black),
+//                        singleLine = true,
+//                        shape = RoundedCornerShape(16.dp),
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(bottom = 8.dp)
+//                            .background(
+//                                color = Color(0xFFFFFFFF),
+//                                shape = RoundedCornerShape(16.dp)
+//                            ),
+//                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+//                        keyboardActions = KeyboardActions(onNext = { /* Handle next action */ })
+//                    )
+//                }
+//            }
+//        }
         Spacer(modifier = Modifier.height(12.dp))
 
         when (val state = recipientsState) {
