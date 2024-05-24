@@ -93,6 +93,8 @@ fun Proposal4Form(
     recipientData: Recipient?,
     individualData: String,
     surveyData: String,
+    mapsLatitudeData: String,
+    mapsLongitudeData: String,
     onNextStepWithData: (Proposal) -> Unit
 ) {
 //    var text by remember { mutableStateOf(proposal4Data) }
@@ -110,8 +112,8 @@ fun Proposal4Form(
     var statusOrangTua by remember { mutableStateOf(statusOrangTuaOptions[0]) }
 
 
-    var mapsLatitude by remember { mutableStateOf("") }
-    var mapsLongitude by remember { mutableStateOf("") }
+    var mapsLatitude by remember { mutableStateOf(mapsLatitudeData) }
+    var mapsLongitude by remember { mutableStateOf(mapsLongitudeData) }
 
     val date = remember { mutableStateOf(LocalDate.now())}
 
@@ -149,6 +151,7 @@ fun Proposal4Form(
                             .fillMaxWidth()
                             .padding(bottom = 8.dp),
                         fontWeight = FontWeight.Bold,
+                        color = Color.White,
                         style = TextStyle(fontSize = 14.sp)
                     )
 
@@ -215,6 +218,7 @@ fun Proposal4Form(
                             .fillMaxWidth()
                             .padding(bottom = 8.dp),
                         fontWeight = FontWeight.Bold,
+                        color = Color.White,
                         style = TextStyle(fontSize = 14.sp)
                     )
 
@@ -281,6 +285,7 @@ fun Proposal4Form(
                             .fillMaxWidth()
                             .padding(bottom = 8.dp),
                         fontWeight = FontWeight.Bold,
+                        color = Color.White,
                         style = TextStyle(fontSize = 14.sp)
                     )
 
@@ -337,6 +342,7 @@ fun Proposal4Form(
                             .fillMaxWidth()
                             .padding(bottom = 8.dp),
                         fontWeight = FontWeight.Bold,
+                        color = Color.White,
                         style = TextStyle(fontSize = 14.sp)
                     )
 
@@ -403,10 +409,12 @@ fun Proposal4Form(
                             .fillMaxWidth()
                             .padding(bottom = 8.dp),
                         fontWeight = FontWeight.Bold,
+                        color = Color.White,
                         style = TextStyle(fontSize = 14.sp)
                     )
 
                     OutlinedTextField(
+                        readOnly = true,
                         value = mapsLatitude,
                         onValueChange = { mapsLatitude = it },
                         colors = OutlinedTextFieldDefaults.colors(
@@ -435,10 +443,12 @@ fun Proposal4Form(
                             .fillMaxWidth()
                             .padding(bottom = 8.dp),
                         fontWeight = FontWeight.Bold,
+                        color = Color.White,
                         style = TextStyle(fontSize = 14.sp)
                     )
 
                     OutlinedTextField(
+                        readOnly = true,
                         value = mapsLongitude,
                         onValueChange = { mapsLongitude = it },
                         colors = OutlinedTextFieldDefaults.colors(
@@ -467,6 +477,7 @@ fun Proposal4Form(
                             .fillMaxWidth()
                             .padding(bottom = 8.dp),
                         fontWeight = FontWeight.Bold,
+                        color = Color.White,
                         style = TextStyle(fontSize = 14.sp)
                     )
                     ImageInputBox(
@@ -492,6 +503,7 @@ fun Proposal4Form(
                             .fillMaxWidth()
                             .padding(bottom = 8.dp),
                         fontWeight = FontWeight.Bold,
+                        color = Color.White,
                         style = TextStyle(fontSize = 14.sp)
                     )
                     ImageInputBox(
@@ -520,21 +532,6 @@ fun Proposal4Form(
                         text = "Selanjutnya",
                         fullWidth = false,
                         onClick = {
-//                            val proposal = recipientData?.let {
-//                                Proposal(
-//                                    programBansos = programBansos,
-//                                    disabilitas = disabilitas,
-//                                    tanggalHamil = tanggalHamil,
-//                                    statusOrangTua = statusOrangTua,
-//                                    mapsLatitude = mapsLatitude,
-//                                    mapsLongitude = mapsLongitude,
-//                                    idRecipient = it.id,
-//                                    idIndividual = individualData,
-//                                    idSurvey = surveyData
-//                                )
-//                            }
-//                            proposalViewModel.createProposal(proposal!!, recipientData.nik)
-
                             fotoKtp?.let { firstBitmap ->
                                 fotoRumah?.let { secondBitmap ->
                                     val proposal = recipientData?.let {

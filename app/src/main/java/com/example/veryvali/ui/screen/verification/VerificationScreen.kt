@@ -105,103 +105,13 @@ fun ScrollContent(innerPadding: PaddingValues, navController: NavHostController)
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 56.dp, start = 24.dp, end = 24.dp)
+            .padding(innerPadding)
+            .padding(horizontal = 24.dp)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
     ) {
-//        OutlinedTextField(
-//            value = search,
-//            onValueChange = { search = it },
-//            label = { Text("Cari") },
-//            shape = RoundedCornerShape(24.dp),
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(bottom = 8.dp),
-//        )
-//        Column(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .background(color = Color(0xFFA6D4FD), shape = RoundedCornerShape(24.dp))
-//                .padding(horizontal = 16.dp, vertical = 12.dp)
-//        ) {
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//                horizontalArrangement = Arrangement.Center
-//            ) {
-//
-//                Column (modifier = Modifier
-//                    .weight(1f)
-//                    .padding(horizontal = 2.dp)){
-//                    Text(
-//                        text = "Kecamatan",
-//                        modifier = Modifier
-//                            .padding(bottom = 8.dp),
-//                        fontWeight = FontWeight.Bold,
-//                        style = TextStyle(fontSize = 14.sp)
-//                    )
-//
-//                    OutlinedTextField(
-//                        value = text,
-//                        onValueChange = { text = it },
-//                        colors = OutlinedTextFieldDefaults.colors(
-//                            unfocusedTextColor = Color.White,
-//                            unfocusedBorderColor = Color.White,
-//                            focusedTextColor = Color.White,
-//                            focusedBorderColor = Color.White,
-//                        ),
-//                        textStyle = TextStyle(color = Color.Black),
-//                        singleLine = true,
-//                        shape = RoundedCornerShape(16.dp),
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .padding(bottom = 8.dp)
-//                            .background(
-//                                color = Color(0xFFFFFFFF),
-//                                shape = RoundedCornerShape(16.dp)
-//                            ),
-//                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-//                        keyboardActions = KeyboardActions(onNext = { /* Handle next action */ })
-//                    )
-//                }
-//                Column(modifier = Modifier
-//                    .weight(1f)
-//                    .padding(horizontal = 2.dp)) {
-//                    Text(
-//                        text = "Kelurahan",
-//                        modifier = Modifier
-//                            .padding(bottom = 8.dp),
-//                        fontWeight = FontWeight.Bold,
-//                        style = TextStyle(fontSize = 14.sp)
-//                    )
-//
-//                    OutlinedTextField(
-//                        value = text,
-//                        onValueChange = { text = it },
-//                        colors = OutlinedTextFieldDefaults.colors(
-//                            unfocusedTextColor = Color.White,
-//                            unfocusedBorderColor = Color.White,
-//                            focusedTextColor = Color.White,
-//                            focusedBorderColor = Color.White,
-//                        ),
-//                        textStyle = TextStyle(color = Color.Black),
-//                        singleLine = true,
-//                        shape = RoundedCornerShape(16.dp),
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .padding(bottom = 8.dp)
-//                            .background(
-//                                color = Color(0xFFFFFFFF),
-//                                shape = RoundedCornerShape(16.dp)
-//                            ),
-//                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-//                        keyboardActions = KeyboardActions(onNext = { /* Handle next action */ })
-//                    )
-//                }
-//            }
-//        }
         Spacer(modifier = Modifier.height(12.dp))
-
         when (val state = recipientsState) {
             is BansosViewModel.BansosState.Loading -> {
                 Row(
@@ -246,16 +156,17 @@ fun CollapseItem(
     ) {
         Text(
             text = itemName,
+            color = Color.White,
             modifier = Modifier.padding(top = 12.dp),
             style = TextStyle(fontSize = 14.sp)
         )
         IconButton(
             onClick = { expanded = !expanded },
             modifier = Modifier.padding(0.dp)
-
         ) {
             Icon(
                 imageVector = icon,
+
                 contentDescription = "Expand / Collapse Icon"
             )
         }
@@ -268,9 +179,6 @@ fun CollapseItem(
 
 @Composable
 fun RecipientListItem(recipient: Recipient, navController: NavHostController) {
-//    val bundle = Bundle().apply {
-//        putParcelable("recipient", recipient)
-//    }
     val proposalViewModel: ProposalViewModel = viewModel()
 
     Column(
@@ -289,6 +197,7 @@ fun RecipientListItem(recipient: Recipient, navController: NavHostController) {
                 .padding(horizontal = 2.dp)){
                 Text(
                     text = "Nama & Umur",
+                    color = Color.White,
                     modifier = Modifier
                         .padding(bottom = 8.dp),
                     fontWeight = FontWeight.Bold,
@@ -325,6 +234,7 @@ fun RecipientListItem(recipient: Recipient, navController: NavHostController) {
             {
                 Text(
                     text = "Tanggapan Kelayakan",
+                    color = Color.White,
                     modifier = Modifier
                         .padding(bottom = 8.dp),
                     fontWeight = FontWeight.Bold,
@@ -843,6 +753,7 @@ fun RecipientListItem(recipient: Recipient, navController: NavHostController) {
         ) {
             Text(
                 text = "Klik untuk memberi tanggapan",
+                color = Color.White,
                 modifier = Modifier
                     .padding(bottom = 8.dp),
                 fontWeight = FontWeight.Light,

@@ -39,7 +39,6 @@ fun MainScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize(),
-//            .padding(16.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -104,15 +103,6 @@ fun MainScreen(navController: NavHostController) {
                         verticalArrangement = Arrangement.Bottom,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-//                        CustomButton(text = "Masuk", fullWidth = false) {
-//                            navController.navigate("login")
-//                        }
-//                        CustomButton(
-//                            text = "Daftar",
-//                            fullWidth = false
-//                        ) {
-//                            navController.navigate("register")
-//                        }
                         Button(
                             onClick = { navController.navigate("login") },
                             modifier = Modifier

@@ -17,9 +17,9 @@ import androidx.core.view.WindowCompat
 
 private val LightColorScheme = lightColorScheme(
     primary = Blue200,
-    secondary = PurpleGrey40,
+    secondary = WhiteCurrent,
     tertiary = Pink40,
-    onPrimary = Blue200
+    onPrimary = WhiteCurrent
 )
 
 @Composable

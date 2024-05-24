@@ -137,7 +137,8 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(end = 16.dp, start = 16.dp, top = 72.dp),
+            .padding(innerPadding)
+            .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     )
     {

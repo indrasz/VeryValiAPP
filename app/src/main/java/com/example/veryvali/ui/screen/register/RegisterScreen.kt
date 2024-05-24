@@ -53,7 +53,7 @@ fun RegisterScreen(navController: NavHostController)  {
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* do something */ }) {
+                    IconButton(onClick = {  navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = "Localized description"
@@ -87,7 +87,7 @@ fun ScrollContent(innerPadding: PaddingValues, navController: NavHostController)
     ) {
         item {
             Image(
-                painter = painterResource(id = R.drawable.img_hero2),
+                painter = painterResource(id = R.drawable.img_banner),
                 contentDescription = "Hero Image",
                 modifier = Modifier
                     .fillMaxWidth()

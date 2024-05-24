@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation ("com.google.accompanist:accompanist-permissions:0.30.0")
 
 //    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
     //noinspection UseTomlInstead
@@ -78,6 +79,7 @@ dependencies {
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation(libs.play.services.location)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

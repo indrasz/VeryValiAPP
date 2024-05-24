@@ -52,10 +52,14 @@ import com.example.veryvali.di.SurveyViewModel
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProposalScreen(navController: NavHostController) {
+fun ProposalScreen(
+    navController: NavHostController,
+    mapsLangitude: String,
+    mapsLongitude: String
+) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
-    var currentStep by remember { mutableIntStateOf(1) }
+    var currentStep by remember { mutableIntStateOf(4) }
 
     var recipientData by remember { mutableStateOf<Recipient?>(null) }
     var individualData by remember { mutableStateOf("")}
@@ -125,7 +129,7 @@ fun ProposalScreen(navController: NavHostController) {
                     }
                 }
                 4 -> {
-                    Proposal4Form(innerPadding, proposalViewModel, recipientData, individualData, surveyData) {
+                    Proposal4Form(innerPadding, proposalViewModel, recipientData, individualData, surveyData, mapsLangitude, mapsLongitude) {
                         currentStep++
                     }
                 }
@@ -146,7 +150,7 @@ fun CustomProgressIndicator(currentStep: Int) {
         contentAlignment = Alignment.Center
     ) {
         LinearProgressIndicator(
-            color = Color(0xFF8B8FFF),
+            color = Color(0xFF23317D),
             progress = currentStep.toFloat() / totalSteps.toFloat(),
             modifier = Modifier.fillMaxWidth()
         )
@@ -155,7 +159,7 @@ fun CustomProgressIndicator(currentStep: Int) {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             for (step in 1..totalSteps) {
-                val backgroundColor = if (step <= currentStep) Color(0xFF8B8FFF) else Color(0xFFD0D0D0)
+                val backgroundColor = if (step <= currentStep) Color(0xFF23317D) else Color(0xFFD0D0D0)
                 Box(
                     modifier = Modifier
                         .padding(horizontal = 8.dp)
@@ -164,7 +168,7 @@ fun CustomProgressIndicator(currentStep: Int) {
                 ) {
                     Text(
                         text = "$step",
-                        color = Color.Black,
+                        color = Color.White,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.align(Alignment.Center)
                     )

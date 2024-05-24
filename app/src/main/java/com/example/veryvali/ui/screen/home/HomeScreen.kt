@@ -102,7 +102,7 @@ fun HomeContent(innerPadding: PaddingValues, navController: NavHostController) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.img_pegusulan),
+                    painter = painterResource(id = R.drawable.img_hero1),
                     contentDescription = "Hero Image",
                     modifier = Modifier
                         .fillMaxWidth()
@@ -128,7 +128,7 @@ fun HomeContent(innerPadding: PaddingValues, navController: NavHostController) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.img_verifikasi),
+                    painter = painterResource(id = R.drawable.img_hero2),
                     contentDescription = "Hero Image",
                     modifier = Modifier
                         .fillMaxWidth()

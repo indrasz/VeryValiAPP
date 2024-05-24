@@ -62,6 +62,7 @@ fun Proposal1Form(
                     .fillMaxWidth()
                     .padding(bottom = 8.dp),
                 fontWeight = FontWeight.Bold,
+                color = Color.White,
                 style = TextStyle(fontSize = 14.sp)
             )
 
