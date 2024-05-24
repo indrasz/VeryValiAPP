@@ -11,6 +11,8 @@ data class Proposal(
     val statusOrangTua: String,
     val mapsLatitude: String,
     val mapsLongitude: String,
+    val fotoKTP: String? = null,
+    val fotoRumah: String? = null,
     val idRecipient: String,
     val idIndividual: String,
     val idSurvey: String

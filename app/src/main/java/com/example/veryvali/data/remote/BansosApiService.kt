@@ -20,7 +20,7 @@ interface BansosApiService {
 }
 
 object RetrofitInstance {
-    private const val BASE_URL = "http://192.168.1.5:8080/verivali-admin/"
+    private const val BASE_URL = "http://192.168.1.9:8080/verivali-admin/"
 
     private val client = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)

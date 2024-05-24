@@ -1,5 +1,6 @@
 package com.example.veryvali.di
 
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,25 +21,6 @@ class ProposalViewModel : ViewModel() {
 
     private val _loadingState = MutableStateFlow(false)
     val loadingState: StateFlow<Boolean> = _loadingState
-
-//    fun cekDataNIK(
-//        nik: String,
-//        onNext: (Recipient) -> Unit
-//    ) {
-//        _loadingState.value = true // Set isLoading true saat proses pengecekan dimulai
-//        repository.checkNIK(
-//            nik,
-//            onSuccess = { recipient ->
-////                Log.d("Recipient Data from view model","$recipient")
-//                _loadingState.value = false // Set isLoading false saat proses selesai
-//                onNext(recipient)
-//            },
-//            onFailure = {
-//                _loadingState.value = false // Set isLoading false saat proses selesai
-//                // Handle failure jika NIK tidak ditemukan
-//            }
-//        )
-//    }
 
     fun cekDataNIK(
         nik: String,
@@ -87,6 +69,8 @@ class ProposalViewModel : ViewModel() {
     fun createProposal(
         proposal: Proposal,
         recipientId: String,
+        fotoKTP: Bitmap,
+        fotoRumah: Bitmap,
         onNext: (Proposal) -> Unit
     ) {
         _loadingState.value = true // Set loading state menjadi true saat operasi dimulai
@@ -95,6 +79,8 @@ class ProposalViewModel : ViewModel() {
             proposalRepository.createProposalWithRecipientId(
                 proposal,
                 recipientId,
+                fotoKTP,
+                fotoRumah,
                 onSuccess = {
                     _loadingState.value = false // Set loading state menjadi false saat operasi selesai
                     onNext(proposal)
@@ -106,6 +92,4 @@ class ProposalViewModel : ViewModel() {
             )
         }
     }
-
-
 }

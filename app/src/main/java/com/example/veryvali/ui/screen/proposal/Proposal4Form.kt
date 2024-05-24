@@ -63,6 +63,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -73,6 +74,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.veryvali.data.model.Proposal
 import com.example.veryvali.data.model.Recipient
+import com.example.veryvali.data.model.Response
 import com.example.veryvali.data.model.SurveyType
 import com.example.veryvali.data.repository.ProposalRepository
 import com.example.veryvali.data.repository.SurveyRepository
@@ -518,21 +520,46 @@ fun Proposal4Form(
                         text = "Selanjutnya",
                         fullWidth = false,
                         onClick = {
-                            val proposal = recipientData?.let {
-                                Proposal(
-                                    programBansos = programBansos,
-                                    disabilitas = disabilitas,
-                                    tanggalHamil = tanggalHamil,
-                                    statusOrangTua = statusOrangTua,
-                                    mapsLatitude = mapsLatitude,
-                                    mapsLongitude = mapsLongitude,
-                                    idRecipient = it.id,
-                                    idIndividual = individualData,
-                                    idSurvey = surveyData
-                                )
-                            }
-                            proposalViewModel.createProposal(proposal!!, recipientData.nik) { proposalItem ->
-                                onNextStepWithData(proposalItem)
+//                            val proposal = recipientData?.let {
+//                                Proposal(
+//                                    programBansos = programBansos,
+//                                    disabilitas = disabilitas,
+//                                    tanggalHamil = tanggalHamil,
+//                                    statusOrangTua = statusOrangTua,
+//                                    mapsLatitude = mapsLatitude,
+//                                    mapsLongitude = mapsLongitude,
+//                                    idRecipient = it.id,
+//                                    idIndividual = individualData,
+//                                    idSurvey = surveyData
+//                                )
+//                            }
+//                            proposalViewModel.createProposal(proposal!!, recipientData.nik)
+
+                            fotoKtp?.let { firstBitmap ->
+                                fotoRumah?.let { secondBitmap ->
+                                    val proposal = recipientData?.let {
+                                        Proposal(
+                                            programBansos = programBansos,
+                                            disabilitas = disabilitas,
+                                            tanggalHamil = tanggalHamil,
+                                            statusOrangTua = statusOrangTua,
+                                            mapsLatitude = mapsLatitude,
+                                            mapsLongitude = mapsLongitude,
+                                            idRecipient = it.id,
+                                            idIndividual = individualData,
+                                            idSurvey = surveyData
+                                        )
+                                    }
+
+                                    proposalViewModel.createProposal(
+                                        proposal!!,
+                                        recipientData.nik,
+                                        firstBitmap.asAndroidBitmap(),
+                                        secondBitmap.asAndroidBitmap()
+                                    ){ proposalItem ->
+                                        onNextStepWithData(proposalItem)
+                                    }
+                                }
                             }
                         }
                     )
