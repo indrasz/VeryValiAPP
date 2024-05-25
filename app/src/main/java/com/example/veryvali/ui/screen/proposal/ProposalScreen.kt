@@ -59,7 +59,7 @@ fun ProposalScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
-    var currentStep by remember { mutableIntStateOf(4) }
+    var currentStep by remember { mutableIntStateOf(1) }
 
     var recipientData by remember { mutableStateOf<Recipient?>(null) }
     var individualData by remember { mutableStateOf("")}
