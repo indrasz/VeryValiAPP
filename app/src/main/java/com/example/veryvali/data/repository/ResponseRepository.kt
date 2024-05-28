@@ -1,16 +1,39 @@
 package com.example.veryvali.data.repository
 
 import android.graphics.Bitmap
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.veryvali.data.model.Response
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.io.ByteArrayOutputStream
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class ResponseRepository {
     private val db = FirebaseFirestore.getInstance()
     private val responseCollection = db.collection("responses")
     private val recipientCollection = db.collection("recipients")
     private val storage = FirebaseStorage.getInstance()
+
+    fun getAllResponses(): LiveData<List<Response>> {
+        val liveData = MutableLiveData<List<Response>>()
+
+        responseCollection.get()
+            .addOnSuccessListener { snapshot ->
+                val responseList = snapshot.documents.mapNotNull { document ->
+                    document.toObject(Response::class.java)
+                }
+                liveData.value = responseList
+            }
+            .addOnFailureListener { exception ->
+                // Handle failure
+            }
+
+        return liveData
+    }
+
 
     fun createResponseWithRecipientId(
         response: Response,

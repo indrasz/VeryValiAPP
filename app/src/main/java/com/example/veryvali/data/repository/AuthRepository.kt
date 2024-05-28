@@ -1,7 +1,11 @@
 package com.example.veryvali.data.repository
 
+import android.content.Context
+import android.util.Log
 import com.example.veryvali.data.model.User
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 
 class AuthRepository {
@@ -36,32 +40,102 @@ class AuthRepository {
             }
     }
 
-    // Fungsi untuk melakukan login dengan NIP dan password
-    fun userLogin(email: String, password: String, onSuccess: () -> Unit, onFailure: (String) -> Unit) {
-        // Autentikasi dengan Firebase Authentication
+    fun userLogin(
+        context: Context,
+        email: String,
+        password: String,
+        onSuccess: (User) -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        // Authenticate with Firebase Authentication
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { authTask ->
                 if (authTask.isSuccessful) {
-                    // Login berhasil
-                    onSuccess()
+                    val user = FirebaseAuth.getInstance().currentUser
+                    if (user != null) {
+                        val userId = user.uid
+                        val db = FirebaseFirestore.getInstance()
+                        val userDocRef = db.collection("users").document(userId)
+                        userDocRef.get().addOnCompleteListener { docTask ->
+                            if (docTask.isSuccessful) {
+                                val document = docTask.result
+                                if (document.exists()) {
+                                    try {
+                                        val userData = document.toObject(User::class.java)?.copy(userId = userId)
+                                        Log.d("User data in Firestore", userData.toString())
+                                        if (userData != null) {
+                                            saveUserDataToPreferences(context, userData)
+                                            onSuccess(userData)
+                                        } else {
+                                            onFailure("User data is null")
+                                        }
+                                    } catch (e: Exception) {
+                                        Log.e("User data error", "Error parsing user data", e)
+                                        onFailure("Error parsing user data")
+                                    }
+                                } else {
+                                    Log.d("Firestore", "No user data found")
+                                    onFailure("No user data found")
+                                }
+                            } else {
+                                Log.e("Firestore", "Failed to fetch user data", docTask.exception)
+                                onFailure(docTask.exception?.message ?: "Failed to fetch user data")
+                            }
+                        }
+                    } else {
+                        Log.e("Auth", "User is null after successful login")
+                        onFailure("Failed to get user information")
+                    }
                 } else {
-                    // Login gagal
+                    Log.e("Auth", "Login failed", authTask.exception)
                     onFailure(authTask.exception?.message ?: "Unknown error occurred.")
                 }
             }
     }
+    fun userLogout(onSuccess: () -> Unit, onFailure: (String) -> Unit) {
+        FirebaseAuth.getInstance().signOut()
+        // Check if sign out was successful
+        if (FirebaseAuth.getInstance().currentUser == null) {
+            onSuccess()
+        } else {
+            onFailure("Failed to log out.")
+        }
+    }
 
-//    fun logout(onSuccess: () -> Unit, onFailure: (String) -> Unit) {
-//        // Lakukan logout dari Firebase Authentication
-//        FirebaseAuth.getInstance().signOut()
-//            .addOnCompleteListener { logoutTask ->
-//                if (logoutTask.isSuccessful) {
-//                    // Logout berhasil
-//                    onSuccess()
-//                } else {
-//                    // Logout gagal
-//                    onFailure(logoutTask.exception?.message ?: "Unknown error occurred.")
-//                }
-//            }
-//    }
+    fun saveUserDataToPreferences(context: Context, user: User) {
+        val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        with(sharedPreferences.edit()) {
+            putString("userId", user.userId)
+            putString("username", user.username)
+            putString("nip", user.nip)
+            putString("email", user.email)
+            putString("whatsappNumber", user.whatsappNumber)
+            putString("password", user.password)
+            apply()
+        }
+    }
+
+    fun getUserDataFromPreferences(context: Context): User? {
+        val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val userId = sharedPreferences.getString("userId", null)
+        val username = sharedPreferences.getString("username", null)
+        val nip = sharedPreferences.getString("nip", null)
+        val email = sharedPreferences.getString("email", null)
+        val whatsappNumber = sharedPreferences.getString("whatsappNumber", null)
+        val password = sharedPreferences.getString("password", null)
+
+        return if (userId != null && username != null && nip != null && email != null && whatsappNumber != null && password != null) {
+            User(userId, username, nip, email, whatsappNumber, password)
+        } else {
+            null
+        }
+    }
+
+    fun clearUserDataFromPreferences(context: Context) {
+        val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        with(sharedPreferences.edit()) {
+            clear()
+            apply()
+        }
+    }
 }

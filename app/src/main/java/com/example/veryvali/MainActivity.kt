@@ -9,12 +9,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -27,8 +26,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.veryvali.data.repository.ResponseRepository
 import com.example.veryvali.di.BansosViewModel
-import com.example.veryvali.di.RecipientsViewModel
+import com.example.veryvali.di.UserViewModel
 import com.example.veryvali.ui.screen.login.LoginScreen
 import com.example.veryvali.ui.screen.MainScreen
 import com.example.veryvali.ui.screen.home.HomeScreen
@@ -41,13 +41,13 @@ import com.example.veryvali.ui.screen.verification.VerificationScreen
 import com.example.veryvali.ui.theme.VeryValiTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val responseRepository = ResponseRepository()
 
 
     @OptIn(ExperimentalPermissionsApi::class)
@@ -56,6 +56,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         setContent {
+//            val isUserLoggedIn = FirebaseAuth.getInstance().currentUser != null
+//            ComposeNavigation()
+
             var mapsLatitude by remember { mutableStateOf("") }
             var mapsLongitude by remember { mutableStateOf("") }
 
@@ -83,9 +86,9 @@ class MainActivity : ComponentActivity() {
             VeryValiTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = Color(0xFFFFFFFF),
+                    color = Color.White,
                 ) {
-                    ComposeNavigation(mapsLatitude, mapsLongitude)
+                    ComposeNavigation(mapsLatitude, mapsLongitude, responseRepository)
                 }
             }
         }
@@ -94,31 +97,59 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("StateFlowValueCalledInComposition")
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
-    fun ComposeNavigation(mapsLatitude: String, mapsLongitude: String) {
+    fun ComposeNavigation(mapsLatitude: String, mapsLongitude: String, responseRepository: ResponseRepository) {
+
         val navController = rememberNavController()
         val viewModel: BansosViewModel = viewModel()
+        val userViewModel: UserViewModel = viewModel()
+//        val responses = responseRepository.getAllResponses()
 
-        NavHost(navController = navController, startDestination = "main"){
-            composable("main"){
-                MainScreen(navController = navController)
+        val user by userViewModel.userData.observeAsState()
+//        val additionalUserData by userViewModel.additionalUserData.observeAsState()
+
+        Log.d("Darta user main activity", user.toString())
+
+
+        NavHost(navController = navController, startDestination = if (user != null) "home" else "main"){
+            composable("main") {
+                if (user == null) {
+                    MainScreen(navController = navController)
+                } else {
+                    navController.navigate("home") {
+                        popUpTo("main") { inclusive = true }
+                    }
+                }
             }
-            composable("login"){
-                LoginScreen(navController = navController)
+            composable("login") {
+                if (user == null) {
+                    LoginScreen(navController = navController, userViewModel = userViewModel)
+                } else {
+                    navController.navigate("home") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                }
             }
-            composable("register"){
-                RegisterScreen(navController = navController)
+            composable("register") {
+                if (user == null) {
+                    RegisterScreen(navController = navController)
+                } else {
+                    navController.navigate("home") {
+                        popUpTo("register") { inclusive = true }
+                    }
+                }
             }
             composable("home"){
                 HomeScreen(navController = navController)
             }
             composable("profile"){
-                ProfileScreen(navController = navController)
+                ProfileScreen(navController = navController, user = user, userViewModel = userViewModel)
             }
             composable("proposal"){
-                ProposalScreen(navController = navController, mapsLatitude, mapsLongitude)
+                ProposalScreen(navController = navController, mapsLatitude, mapsLongitude, user = user)
             }
             composable("verification") {
                 VerificationScreen(navController = navController)
+//                VerificationScreen(navController = navController)
             }
             composable("response/{recipientId}",
                 arguments = listOf(navArgument("recipientId") { type = NavType.StringType })) { backStackEntry ->
@@ -131,7 +162,7 @@ class MainActivity : ComponentActivity() {
                     }
                 }
                 if (recipient != null) {
-                    ResponseScreen(navController = navController, recipient = recipient)
+                    ResponseScreen(navController = navController, recipient = recipient, user = user)
                 }
             }
             composable("success"){

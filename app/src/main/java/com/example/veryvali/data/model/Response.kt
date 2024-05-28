@@ -10,5 +10,6 @@ data class Response(
     val catatan: String,
     val idRecipient: String,
     val dataPendukung1Url: String? = null,
-    val dataPendukung2Url: String? = null
+    val dataPendukung2Url: String? = null,
+    val idUser: String
 ) : Parcelable

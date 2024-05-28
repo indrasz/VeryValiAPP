@@ -36,14 +36,6 @@ class ProposalRepository {
                             proposalCollection.add(proposalWithImages)
                                 .addOnSuccessListener { onSuccess() }
                                 .addOnFailureListener { e -> onFailure(e.message ?: "Failed to create response data.") }
-//                            proposalCollection
-//                                .add(proposal.copy(idRecipient = recipientId)) // Set idRecipient dari individual
-//                                .addOnSuccessListener {
-//                                    onSuccess()
-//                                }
-//                                .addOnFailureListener { e ->
-//                                    onFailure(e.message ?: "Failed to create proposal data.")
-//                                }
                         }
                     }
                     // Penerima ditemukan, buat data individu

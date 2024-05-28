@@ -15,5 +15,6 @@ data class Proposal(
     val fotoRumah: String? = null,
     val idRecipient: String,
     val idIndividual: String,
-    val idSurvey: String
+    val idSurvey: String,
+    val idUser: String
 ) : Parcelable

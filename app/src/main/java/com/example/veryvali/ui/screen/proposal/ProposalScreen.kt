@@ -42,6 +42,7 @@ import androidx.navigation.NavHostController
 import com.example.veryvali.data.model.Individual
 import com.example.veryvali.data.model.Recipient
 import com.example.veryvali.data.model.SurveyType
+import com.example.veryvali.data.model.User
 import com.example.veryvali.data.repository.IndividualRepository
 import com.example.veryvali.data.repository.ProposalRepository
 import com.example.veryvali.data.repository.SurveyRepository
@@ -55,7 +56,8 @@ import com.example.veryvali.di.SurveyViewModel
 fun ProposalScreen(
     navController: NavHostController,
     mapsLangitude: String,
-    mapsLongitude: String
+    mapsLongitude: String,
+    user: User?
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -76,7 +78,7 @@ fun ProposalScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        "Proposal $currentStep",
+                        "Pengusulan",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -129,7 +131,7 @@ fun ProposalScreen(
                     }
                 }
                 4 -> {
-                    Proposal4Form(innerPadding, proposalViewModel, recipientData, individualData, surveyData, mapsLangitude, mapsLongitude) {
+                    Proposal4Form(innerPadding, proposalViewModel, recipientData, individualData, surveyData, mapsLangitude, mapsLongitude, user = user) {
                         currentStep++
                     }
                 }

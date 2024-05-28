@@ -1,12 +1,9 @@
 package com.example.veryvali.ui.screen.verification
 
-import android.os.Bundle
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -28,7 +25,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -36,7 +32,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,14 +49,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.os.bundleOf
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.veryvali.data.model.Recipient
-import com.example.veryvali.data.repository.RecipientRepository
+import com.example.veryvali.data.model.Response
 import com.example.veryvali.di.BansosViewModel
 import com.example.veryvali.di.ProposalViewModel
-import com.example.veryvali.di.RecipientsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -127,15 +121,16 @@ fun ScrollContent(innerPadding: PaddingValues, navController: NavHostController)
                 )
             }
             is BansosViewModel.BansosState.Success -> {
+
 //                filteredRecipients.let { recipients ->
                     state.recipients.forEach { recipient ->
+//                        val status = viewModel.getResponseStatus(recipient.id, responses)
                         RecipientListItem(recipient = recipient, navController = navController)
                         Spacer(modifier = Modifier.height(12.dp))
                     }
 //                }
             }
         }
-
     }
 
 }
@@ -180,6 +175,18 @@ fun CollapseItem(
 @Composable
 fun RecipientListItem(recipient: Recipient, navController: NavHostController) {
     val proposalViewModel: ProposalViewModel = viewModel()
+    val bansosList = recipient.bansos.split(",")
+    val isBansosEligible = bansosList.contains("BPNT (Pengurus)")
+            || bansosList.contains("PKH (Pengurus)")
+            || bansosList.contains("PBI")
+            || bansosList.contains("BLT BBM (Pengurus)")
+            || bansosList.contains("Bantuan Yatim Piatu")
+
+    val statusBPNT = if (bansosList.contains("BPNT (Pengurus)")) "Terdaftar" else "-"
+    val statusPKH = if (bansosList.contains("PKH (Pengurus)")) "Terdaftar" else "-"
+    val statusPBI = if (bansosList.contains("PBI")) "Terdaftar" else "-"
+    val statusBLT = if (bansosList.contains("BLT BBM (Pengurus)")) "Terdaftar" else "-"
+    val statusBYT = if (bansosList.contains("Bantuan Yatim Piatu")) "Terdaftar" else "-"
 
     Column(
         modifier = Modifier
@@ -242,7 +249,8 @@ fun RecipientListItem(recipient: Recipient, navController: NavHostController) {
                 )
 
                 OutlinedTextField(
-                    value = "",
+                    value =" status.toString()",
+                    readOnly = true,
                     onValueChange = {  },
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedTextColor = Color.White,
@@ -304,7 +312,7 @@ fun RecipientListItem(recipient: Recipient, navController: NavHostController) {
                                 style = TextStyle(fontSize = 12.sp)
                             )
                             Text(
-                                text = "-",
+                                text = statusBPNT,
                                 modifier = Modifier
                                     .padding(bottom = 4.dp),
                                 fontWeight = FontWeight.Light,
@@ -346,7 +354,7 @@ fun RecipientListItem(recipient: Recipient, navController: NavHostController) {
                                 style = TextStyle(fontSize = 12.sp)
                             )
                             Text(
-                                text = "-",
+                                text = statusPBI,
                                 modifier = Modifier
                                     .padding(bottom = 4.dp),
                                 fontWeight = FontWeight.Light,
@@ -437,7 +445,7 @@ fun RecipientListItem(recipient: Recipient, navController: NavHostController) {
                                 style = TextStyle(fontSize = 12.sp)
                             )
                             Text(
-                                text = "-",
+                                text = statusPKH,
                                 modifier = Modifier
                                     .padding(bottom = 4.dp),
                                 fontWeight = FontWeight.Light,
@@ -486,7 +494,7 @@ fun RecipientListItem(recipient: Recipient, navController: NavHostController) {
                                 style = TextStyle(fontSize = 12.sp)
                             )
                             Text(
-                                text = "-",
+                                text = statusBLT,
                                 modifier = Modifier
                                     .padding(bottom = 4.dp),
                                 fontWeight = FontWeight.Light,
@@ -528,7 +536,7 @@ fun RecipientListItem(recipient: Recipient, navController: NavHostController) {
                                 style = TextStyle(fontSize = 12.sp)
                             )
                             Text(
-                                text = "-",
+                                text = statusBYT,
                                 modifier = Modifier
                                     .padding(bottom = 4.dp),
                                 fontWeight = FontWeight.Light,

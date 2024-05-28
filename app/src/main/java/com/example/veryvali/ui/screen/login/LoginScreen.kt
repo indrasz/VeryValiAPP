@@ -34,13 +34,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.veryvali.R
 import com.example.veryvali.data.repository.AuthRepository
+import com.example.veryvali.di.UserViewModel
 import com.example.veryvali.ui.screen.response.ResponseContent
 
 //import com.example.veryvali.di.login.LoginViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(navController: NavHostController) {
+fun LoginScreen(navController: NavHostController, userViewModel: UserViewModel) {
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
@@ -68,12 +69,12 @@ fun LoginScreen(navController: NavHostController) {
             )
         },
     ) { innerPadding ->
-        LoginContent(innerPadding, navController)
+        LoginContent(innerPadding, navController, userViewModel)
     }
 }
 
 @Composable
-fun LoginContent(innerPadding: PaddingValues, navController: NavHostController){
+fun LoginContent(innerPadding: PaddingValues, navController: NavHostController, userViewModel: UserViewModel){
     val ctx = LocalContext.current
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -131,16 +132,17 @@ fun LoginContent(innerPadding: PaddingValues, navController: NavHostController){
                     fullWidth = false,
                     onClick = {
                         // Panggil fungsi login dari AuthRepository saat tombol "Masuk" ditekan
-                        AuthRepository().userLogin(email, password,
-                            onSuccess = {
-                                // Login berhasil, navigasi ke layar beranda
-                                navController.navigate("home")
+                        AuthRepository().userLogin(ctx, email, password,
+                            onSuccess = { user ->
+                                userViewModel.setUserData(user)
+                                navController.navigate("home") {
+                                    popUpTo("login") { inclusive = true }
+                                }
                             },
-                            onFailure = { errorMessage ->
-                                // Login gagal, tampilkan pesan kesalahan kepada pengguna
-                                // Misalnya dengan menampilkan pesan toast atau dialog
-                                Toast.makeText(ctx, errorMessage, Toast.LENGTH_SHORT).show()
+                            onFailure = { error ->
+                                Toast.makeText(ctx, error, Toast.LENGTH_LONG).show()
                             }
+
                         )
                     }
                 )

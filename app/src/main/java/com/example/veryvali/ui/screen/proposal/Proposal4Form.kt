@@ -46,6 +46,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -70,12 +71,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.veryvali.data.model.Proposal
 import com.example.veryvali.data.model.Recipient
 import com.example.veryvali.data.model.Response
 import com.example.veryvali.data.model.SurveyType
+import com.example.veryvali.data.model.User
 import com.example.veryvali.data.repository.ProposalRepository
 import com.example.veryvali.data.repository.SurveyRepository
 import com.example.veryvali.di.ProposalViewModel
@@ -95,6 +98,7 @@ fun Proposal4Form(
     surveyData: String,
     mapsLatitudeData: String,
     mapsLongitudeData: String,
+    user: User?,
     onNextStepWithData: (Proposal) -> Unit
 ) {
 //    var text by remember { mutableStateOf(proposal4Data) }
@@ -133,7 +137,7 @@ fun Proposal4Form(
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 24.dp),
+            .padding(innerPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
     )
     {
@@ -534,28 +538,34 @@ fun Proposal4Form(
                         onClick = {
                             fotoKtp?.let { firstBitmap ->
                                 fotoRumah?.let { secondBitmap ->
-                                    val proposal = recipientData?.let {
-                                        Proposal(
-                                            programBansos = programBansos,
-                                            disabilitas = disabilitas,
-                                            tanggalHamil = tanggalHamil,
-                                            statusOrangTua = statusOrangTua,
-                                            mapsLatitude = mapsLatitude,
-                                            mapsLongitude = mapsLongitude,
-                                            idRecipient = it.id,
-                                            idIndividual = individualData,
-                                            idSurvey = surveyData
-                                        )
+                                    user?.let { userData ->
+                                        val proposal = recipientData?.let {
+                                            Proposal(
+                                                programBansos = programBansos,
+                                                disabilitas = disabilitas,
+                                                tanggalHamil = tanggalHamil,
+                                                statusOrangTua = statusOrangTua,
+                                                mapsLatitude = mapsLatitude,
+                                                mapsLongitude = mapsLongitude,
+                                                idRecipient = it.id,
+                                                idIndividual = individualData,
+                                                idSurvey = surveyData,
+                                                idUser = userData.userId
+                                            )
+                                        }
+
+                                        proposalViewModel.createProposal(
+                                            proposal!!,
+                                            recipientData.nik,
+                                            firstBitmap.asAndroidBitmap(),
+                                            secondBitmap.asAndroidBitmap()
+                                        ){ proposalItem ->
+                                            onNextStepWithData(proposalItem)
+                                        }
                                     }
 
-                                    proposalViewModel.createProposal(
-                                        proposal!!,
-                                        recipientData.nik,
-                                        firstBitmap.asAndroidBitmap(),
-                                        secondBitmap.asAndroidBitmap()
-                                    ){ proposalItem ->
-                                        onNextStepWithData(proposalItem)
-                                    }
+
+
                                 }
                             }
                         }

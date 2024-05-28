@@ -79,6 +79,7 @@ import com.example.veryvali.R
 import com.example.veryvali.data.model.Proposal
 import com.example.veryvali.data.model.Recipient
 import com.example.veryvali.data.model.Response
+import com.example.veryvali.data.model.User
 import com.example.veryvali.di.ResponseViewModel
 import com.example.veryvali.di.SurveyViewModel
 import java.io.File
@@ -89,7 +90,7 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ResponseScreen(navController: NavHostController, recipient: Recipient)  {
+fun ResponseScreen(navController: NavHostController, recipient: Recipient, user: User?)  {
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
@@ -116,12 +117,12 @@ fun ResponseScreen(navController: NavHostController, recipient: Recipient)  {
             )
         },
     ) { innerPadding ->
-        ResponseContent(innerPadding, navController, recipient)
+        ResponseContent(innerPadding, navController, recipient, user)
     }
 }
 
 @Composable
-fun ResponseContent(innerPadding: PaddingValues, navController: NavHostController, recipient: Recipient) {
+fun ResponseContent(innerPadding: PaddingValues, navController: NavHostController, recipient: Recipient, user: User?) {
 
 //    var text by remember { mutableStateOf("") }
 
@@ -449,20 +450,27 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
                         onClick = {
                             selectedFirstImageBitmap?.let { firstBitmap ->
                                 selectedSecondImageBitmap?.let { secondBitmap ->
-                                    val response = Response(
-                                        statusKelayakan = statusKelayakan,
-                                        alasan = alasan,
-                                        catatan = catatan,
-                                        idRecipient = recipient.nik,
-                                    )
+                                    user?.let{ userData ->
+                                        val response = Response(
+                                            statusKelayakan = statusKelayakan,
+                                            alasan = alasan,
+                                            catatan = catatan,
+                                            idRecipient = recipient.nik,
+                                            idUser = userData.userId
+                                        )
 
-                                    responseViewModel.createResponseWithRecipientId(
-                                        response,
-                                        recipient.nik,
-                                        firstBitmap.asAndroidBitmap(),
-                                        secondBitmap.asAndroidBitmap()
-                                    )
-                                    navController.navigate("success")
+                                        responseViewModel.createResponseWithRecipientId(
+                                            response,
+                                            recipient.nik,
+                                            firstBitmap.asAndroidBitmap(),
+                                            secondBitmap.asAndroidBitmap()
+                                        )
+                                        navController.navigate("success")
+                                    }
+
+
+
+
                                 }
                             }
                         }

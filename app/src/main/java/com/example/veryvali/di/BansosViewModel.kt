@@ -2,20 +2,28 @@ package com.example.veryvali.di
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.veryvali.data.model.Recipient
+import com.example.veryvali.data.model.Response
 import com.example.veryvali.data.remote.RetrofitInstance
+import com.example.veryvali.data.repository.ResponseRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class BansosViewModel : ViewModel() {
+//    private val responseRepository = ResponseRepository()
 
     // MutableStateFlow untuk menyimpan state dari data bansos
     private val _recipientsState = MutableStateFlow<BansosState>(BansosState.Loading)
     // StateFlow untuk menyediakan akses ke _recipientsState kepada pengguna luar
     val recipientsState: StateFlow<BansosState> = _recipientsState
+
+//    private val _responsesState = MutableStateFlow<BansosState>(BansosState.Loading)
+//    val responsesState: StateFlow<BansosState> = _responsesState
 
     init {
         // Memuat data bansos saat ViewModel pertama kali dibuat
@@ -35,6 +43,33 @@ class BansosViewModel : ViewModel() {
                 _recipientsState.value = BansosState.Error(e.message ?: "Unknown error occurred.")
             }
         }
+    }
+
+//    private fun fetchResponses() {
+//        viewModelScope.launch {
+//            try {
+//                val responses = responseRepository.getAllResponses()
+//                _responsesState.value = BansosState.Success(responses)
+//            } catch (e: Exception) {
+//                _responsesState.value = BansosState.Error(e.message ?: "Unknown error occurred.")
+//            }
+//        }
+//    }
+
+    // Function to get response status
+    fun getResponseStatus(idRecipient: String?, responses: LiveData<List<Response>>): LiveData<String> {
+        val statusLiveData = MutableLiveData<String>()
+
+        responses.observeForever { responseList ->
+            val status = if (responseList.any { it.idRecipient == idRecipient }) {
+                "Terdaftar"
+            } else {
+                "Belum ada tanggapan"
+            }
+            statusLiveData.value = status
+        }
+
+        return statusLiveData
     }
 
     // Sealed class yang merepresentasikan state dari data bansos
