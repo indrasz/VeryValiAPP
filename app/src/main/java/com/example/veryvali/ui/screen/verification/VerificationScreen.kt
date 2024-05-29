@@ -176,11 +176,11 @@ fun CollapseItem(
 fun RecipientListItem(recipient: Recipient, navController: NavHostController) {
     val proposalViewModel: ProposalViewModel = viewModel()
     val bansosList = recipient.bansos.split(",")
-    val isBansosEligible = bansosList.contains("BPNT (Pengurus)")
-            || bansosList.contains("PKH (Pengurus)")
-            || bansosList.contains("PBI")
-            || bansosList.contains("BLT BBM (Pengurus)")
-            || bansosList.contains("Bantuan Yatim Piatu")
+//    val isBansosEligible = bansosList.contains("BPNT (Pengurus)")
+//            || bansosList.contains("PKH (Pengurus)")
+//            || bansosList.contains("PBI")
+//            || bansosList.contains("BLT BBM (Pengurus)")
+//            || bansosList.contains("Bantuan Yatim Piatu")
 
     val statusBPNT = if (bansosList.contains("BPNT (Pengurus)")) "Terdaftar" else "-"
     val statusPKH = if (bansosList.contains("PKH (Pengurus)")) "Terdaftar" else "-"
@@ -249,7 +249,7 @@ fun RecipientListItem(recipient: Recipient, navController: NavHostController) {
                 )
 
                 OutlinedTextField(
-                    value =" status.toString()",
+                    value = recipient.status ?: "Unknown",
                     readOnly = true,
                     onValueChange = {  },
                     colors = OutlinedTextFieldDefaults.colors(

@@ -1,7 +1,9 @@
 package com.example.veryvali.data.remote
 
+import android.util.Log
 import com.example.veryvali.data.model.Recipient
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -21,6 +23,7 @@ interface BansosApiService {
 
 object RetrofitInstance {
     private const val BASE_URL = "https://verivali.ecodify.id/public/"
+//    private const val BASE_URL = "http://192.168.2.36:8080/verivali-admin/"
 
     private val client = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)
@@ -43,6 +46,39 @@ object RetrofitInstance {
 
 class BansosRepository {
     private val firestore = FirebaseFirestore.getInstance()
+
+    suspend fun fetchAndCheckRecipients(onSuccess: (List<Recipient>) -> Unit, onFailure: (String) -> Unit) {
+        try {
+            val recipients = RetrofitInstance.api.getAllRecipients()
+            recipients.forEach { recipient ->
+                val status = checkAndMarkRecipient(recipient)
+                recipient.status = status // Add status to the recipient
+            }
+            onSuccess(recipients)
+        } catch (e: Exception) {
+            onFailure(e.message ?: "Unknown error occurred.")
+        }
+    }
+
+    suspend fun checkAndMarkRecipient(recipient: Recipient): String {
+        return try {
+            val responsesCollection = firestore.collection("responses")
+            val querySnapshot = responsesCollection
+                .whereEqualTo("idRecipient", recipient.nik)
+                .get()
+                .await()
+
+            if (!querySnapshot.isEmpty) {
+                "Sudah ditanggapi"
+            } else {
+                "Belum ditanggapi"
+            }
+        } catch (e: Exception) {
+            Log.d("BansosRepository", "Error fetching document: ${e.message}")
+            "error"
+        }
+    }
+
 
     suspend fun checkNIK(
         nik: String,

@@ -16,5 +16,6 @@ data class Recipient(
     val alamat: String,
     val kabupaten: String,
     val kecamatan: String,
-    val desa: String
+    val desa: String,
+    var status: String? = null
 ) : Parcelable

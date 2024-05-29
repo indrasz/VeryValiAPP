@@ -3,9 +3,13 @@ package com.example.veryvali.data.repository
 import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.veryvali.data.model.Recipient
 import com.example.veryvali.data.model.Response
+import com.example.veryvali.data.remote.RetrofitInstance
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import retrofit2.Call
+import retrofit2.Callback
 import java.io.ByteArrayOutputStream
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -17,6 +21,7 @@ class ResponseRepository {
     private val recipientCollection = db.collection("recipients")
     private val storage = FirebaseStorage.getInstance()
 
+    
     fun getAllResponses(): LiveData<List<Response>> {
         val liveData = MutableLiveData<List<Response>>()
 
