@@ -46,15 +46,17 @@ import com.google.android.gms.location.LocationServices
 
 class MainActivity : ComponentActivity() {
 
+    //variable mengambil data lokasi
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private val responseRepository = ResponseRepository()
 
+    private val responseRepository = ResponseRepository()
 
     @OptIn(ExperimentalPermissionsApi::class)
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
         setContent {
 //            val isUserLoggedIn = FirebaseAuth.getInstance().currentUser != null
 //            ComposeNavigation()

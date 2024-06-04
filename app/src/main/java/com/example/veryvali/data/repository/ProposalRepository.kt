@@ -9,9 +9,13 @@ import java.io.ByteArrayOutputStream
 
 class ProposalRepository {
 
+    //inisialisasi variabel firestore
     private val db = FirebaseFirestore.getInstance()
+    //inisiasi tabel proposal
     private val proposalCollection = db.collection("proposals")
+    //inisiasi tabel recipients
     private val recipientCollection = db.collection("recipients")
+    //inisiasi storage
     private val storage = FirebaseStorage.getInstance()
 
     fun createProposalWithRecipientId(
@@ -49,6 +53,7 @@ class ProposalRepository {
             }
     }
 
+    //untuk resize ukuran gambar
     private fun resizeBitmap(bitmap: Bitmap, maxSize: Int): Bitmap {
         val width = bitmap.width
         val height = bitmap.height
@@ -65,6 +70,7 @@ class ProposalRepository {
         }
     }
 
+    //fungsi upload gambar
     private fun uploadImage(bitmap: Bitmap, name: String, onComplete: (String) -> Unit) {
         val storageRef = storage.reference.child("images/$name.jpg")
         val baos = ByteArrayOutputStream()

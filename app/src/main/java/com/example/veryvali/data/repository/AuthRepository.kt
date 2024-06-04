@@ -40,6 +40,7 @@ class AuthRepository {
             }
     }
 
+    //fungsi untuk login
     fun userLogin(
         context: Context,
         email: String,
@@ -92,6 +93,8 @@ class AuthRepository {
                 }
             }
     }
+
+    //fungsi untuk logout
     fun userLogout(onSuccess: () -> Unit, onFailure: (String) -> Unit) {
         FirebaseAuth.getInstance().signOut()
         // Check if sign out was successful
@@ -102,6 +105,7 @@ class AuthRepository {
         }
     }
 
+    //untuk nyimpana data user ketika login
     fun saveUserDataToPreferences(context: Context, user: User) {
         val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         with(sharedPreferences.edit()) {
@@ -115,6 +119,7 @@ class AuthRepository {
         }
     }
 
+    //mengambil data user pada saat login
     fun getUserDataFromPreferences(context: Context): User? {
         val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val userId = sharedPreferences.getString("userId", null)
@@ -131,6 +136,7 @@ class AuthRepository {
         }
     }
 
+    //hapus data user login
     fun clearUserDataFromPreferences(context: Context) {
         val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         with(sharedPreferences.edit()) {

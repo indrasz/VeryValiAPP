@@ -15,6 +15,11 @@ interface BansosApiService {
     @GET("api.php?limit=25&page=1")
     suspend fun getAllRecipients(): List<Recipient>
 
+    @GET("api-search.php")
+    suspend fun searchByNIK(
+        @Query("nik") nik: String
+    ): List<Recipient>
+
     @GET("api.php?limit=25&page=1")
     suspend fun checkNIK(
         @Query("nik") nik: String
@@ -46,6 +51,23 @@ object RetrofitInstance {
 
 class BansosRepository {
     private val firestore = FirebaseFirestore.getInstance()
+
+    suspend fun searchByNIK(
+        nik: String,
+        onSuccess: (List<Recipient>) -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        try {
+            val response = RetrofitInstance.api.searchByNIK(nik)
+            if (response.isNotEmpty()) {
+                onSuccess(response)
+            } else {
+                onFailure("NIK tidak ditemukan.")
+            }
+        } catch (e: Exception) {
+            onFailure(e.message ?: "Unknown error occurred.")
+        }
+    }
 
     suspend fun fetchAndCheckRecipients(onSuccess: (List<Recipient>) -> Unit, onFailure: (String) -> Unit) {
         try {

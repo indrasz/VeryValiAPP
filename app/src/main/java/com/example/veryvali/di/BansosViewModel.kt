@@ -27,22 +27,7 @@ class BansosViewModel : ViewModel() {
         fetchRecipients()
     }
 
-    // Fungsi untuk mengambil data bansos dari API
-//    private fun fetchRecipients() {
-//        viewModelScope.launch {
-//            try {
-//                Log.d("BansosViewModel", "Fetching recipients...")
-//                val response = RetrofitInstance.api.getAllRecipients()
-//                Log.d("BansosViewModel", "Recipients fetched successfully: $response")
-//                _recipientsState.value = BansosState.Success(response)
-//            } catch (e: Exception) {
-//                Log.d("BansosViewModel", "Error fetching recipients: ${e.message}")
-//                _recipientsState.value = BansosState.Error(e.message ?: "Unknown error occurred.")
-//            }
-//        }
-//    }
-
-    private fun fetchRecipients() {
+    fun fetchRecipients() {
         viewModelScope.launch {
             try {
                 Log.d("BansosViewModel", "Fetching recipients...")
@@ -62,6 +47,29 @@ class BansosViewModel : ViewModel() {
             }
         }
     }
+
+    fun searchRecipientByNIK(nik: String) {
+        viewModelScope.launch {
+            try {
+                Log.d("BansosViewModel", "Searching recipient by NIK: $nik")
+                repository.searchByNIK(
+                    nik = nik,
+                    onSuccess = { recipients ->
+                        Log.d("BansosViewModel", "Recipient found: $recipients")
+                        _recipientsState.value = BansosState.Success(recipients)
+                    },
+                    onFailure = { error ->
+                        Log.d("BansosViewModel", "Error searching recipient: $error")
+                        _recipientsState.value = BansosState.Error(error)
+                    }
+                )
+            } catch (e: Exception) {
+                Log.d("BansosViewModel", "Error searching recipient: ${e.message}")
+                _recipientsState.value = BansosState.Error(e.message ?: "Unknown error occurred.")
+            }
+        }
+    }
+
 
     // Sealed class yang merepresentasikan state dari data bansos
     sealed class BansosState {

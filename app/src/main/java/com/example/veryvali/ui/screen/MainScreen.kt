@@ -50,6 +50,7 @@ fun MainScreen(navController: NavHostController) {
                 .size(250.dp)
                 .padding(top = 90.dp)
         )
+
         Column(
             modifier = Modifier
                 .padding(top = 0.dp)
@@ -57,7 +58,6 @@ fun MainScreen(navController: NavHostController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Bottom,
         ) {
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()

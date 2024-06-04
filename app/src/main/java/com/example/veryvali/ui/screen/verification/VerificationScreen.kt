@@ -94,7 +94,6 @@ fun ScrollContent(innerPadding: PaddingValues, navController: NavHostController)
     val viewModel: BansosViewModel = viewModel()
     val recipientsState by viewModel.recipientsState.collectAsState()
     var search by remember { mutableStateOf("") }
-    var text by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -105,6 +104,27 @@ fun ScrollContent(innerPadding: PaddingValues, navController: NavHostController)
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
     ) {
+        OutlinedTextField(
+            value = search,
+            onValueChange = { search = it },
+            label = { Text("Cari") },
+            shape = RoundedCornerShape(24.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Search
+            ),
+            keyboardActions = KeyboardActions(
+                onSearch = {
+                    if (search.isNotEmpty()) {
+                        viewModel.searchRecipientByNIK(search) // Trigger search when Enter is pressed
+                    } else {
+                        viewModel.fetchRecipients() // Fetch all recipients when search is cleared
+                    }
+                }
+            )
+        )
         Spacer(modifier = Modifier.height(12.dp))
         when (val state = recipientsState) {
             is BansosViewModel.BansosState.Loading -> {
@@ -112,7 +132,7 @@ fun ScrollContent(innerPadding: PaddingValues, navController: NavHostController)
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ){
-                    CircularProgressIndicator()
+                    CircularProgressIndicator() //UI loading
                 }
             }
             is BansosViewModel.BansosState.Error -> {
