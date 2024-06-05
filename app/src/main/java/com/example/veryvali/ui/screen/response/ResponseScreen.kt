@@ -6,6 +6,7 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -129,6 +130,8 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
     val options = listOf("YA", "TIDAK")
     var alasanExpanded by remember { mutableStateOf(false) }
     var alasan by remember { mutableStateOf(options[0]) }
+
+    val ctx = LocalContext.current
 
     LazyColumn(
         modifier = Modifier
@@ -492,7 +495,11 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
                                             response,
                                             recipient.nik,
                                             firstBitmap.asAndroidBitmap(),
-                                            secondBitmap.asAndroidBitmap()
+                                            secondBitmap.asAndroidBitmap(),
+                                            onSuccess = {},
+                                            onFailure = { errorMessage ->
+                                                Toast.makeText(ctx, "Failed to create response: $errorMessage", Toast.LENGTH_LONG).show()
+                                            }
                                         )
                                         navController.navigate("success")
                                     }

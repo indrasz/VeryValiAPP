@@ -163,12 +163,6 @@ fun ScrollContent(innerPadding: PaddingValues, navController: NavHostController,
                             text = "Data Diri",
                             onClick = {  navController.navigate("profile-data") }
                         )
-//                        Divider()
-//                        MenuItemProfile(
-//                            icon = Icons.Default.Lock,
-//                            text = "Perbarui Kata Sandi",
-//                            onClick = { }
-//                        )
                         Divider()
                         MenuItemProfile(
                             icon = Icons.Default.Info,

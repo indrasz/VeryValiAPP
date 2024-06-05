@@ -25,7 +25,7 @@ class ProposalViewModel : ViewModel() {
     fun cekDataNIK(
         nik: String,
         onNext: (Recipient) -> Unit,
-//        onFailure: (String) -> Unit
+        onFailure: (String) -> Unit
     ) {
         _loadingState.value = true // Set isLoading true saat proses pengecekan dimulai
         viewModelScope.launch {
@@ -39,7 +39,7 @@ class ProposalViewModel : ViewModel() {
                 onFailure = { error ->
                     Log.d("ProposalViewModel", "Error: $error")
                     _loadingState.value = false // Set isLoading false saat proses selesai
-//                    onFailure(error)
+                    onFailure(error)
                 }
             )
         }

@@ -155,17 +155,6 @@ fun ScrollContent(innerPadding: PaddingValues, navController: NavHostController)
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                 keyboardActions = KeyboardActions(onNext = { /* Handle next action */ })
             )
-//            OutlinedTextField(
-//                value = repeatPassword,
-//                onValueChange = { repeatPassword = it },
-//                shape = RoundedCornerShape(24.dp),
-//                label = { Text("Konfirmasi Kata Sandi") },
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(bottom = 8.dp),
-//                visualTransformation = PasswordVisualTransformation(),
-//                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-//            )
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center

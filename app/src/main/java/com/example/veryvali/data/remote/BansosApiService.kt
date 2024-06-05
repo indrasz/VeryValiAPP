@@ -123,7 +123,7 @@ class BansosRepository {
                 onFailure("NIK tidak ditemukan.")
             }
         } catch (e: Exception) {
-            onFailure(e.message ?: "Unknown error occurred.")
+            onFailure("NIK tidak ditemukan.")
         }
     }
 

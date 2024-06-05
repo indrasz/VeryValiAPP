@@ -2,6 +2,7 @@ package com.example.veryvali.di
 
 import android.graphics.Bitmap
 import android.util.Log
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.veryvali.data.model.Response
@@ -20,7 +21,9 @@ class ResponseViewModel : ViewModel() {
         response: Response,
         recipientId: String,
         dataPendukung1: Bitmap,
-        dataPendukung2: Bitmap
+        dataPendukung2: Bitmap,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
     ) {
         _loadingState.value = true
 
@@ -32,9 +35,11 @@ class ResponseViewModel : ViewModel() {
                 dataPendukung2,
                 onSuccess = {
                     _loadingState.value = false
+                    onSuccess()
                 },
                 onFailure = { errorMessage ->
                     _loadingState.value = false
+                    onFailure(errorMessage)
                     Log.e("ResponseViewModel", "Failed to create response: $errorMessage")
                 }
             )

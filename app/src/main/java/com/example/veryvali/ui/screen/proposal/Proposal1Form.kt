@@ -1,6 +1,7 @@
 package com.example.veryvali.ui.screen.proposal
 
 import android.util.Log
+import android.widget.Toast
 import com.example.veryvali.ui.components.CustomButton
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -44,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
@@ -59,10 +61,12 @@ import com.example.veryvali.di.ProposalViewModel
 fun Proposal1Form(
     proposalViewModel: ProposalViewModel,
     onNextStepWithData: (Recipient) -> Unit,
+//    onFailure: (String) -> Unit
 ) {
     var nik by remember { mutableStateOf("") }
     var noKK by remember { mutableStateOf("") }
     val loadingState by proposalViewModel.loadingState.collectAsState()
+    val ctx = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -128,10 +132,15 @@ fun Proposal1Form(
                     text = "Selanjutnya",
                     fullWidth = false,
                     onClick = {
-                        proposalViewModel.cekDataNIK(nik) { recipient ->
-                            onNextStepWithData(recipient)
-                            Log.d("data recipient proposal","$recipient")
-                        }
+                        proposalViewModel.cekDataNIK(
+                            nik,
+                            onNext = { recipient ->
+                                onNextStepWithData(recipient)
+                            },
+                            onFailure = { errorMessage ->
+                                Toast.makeText(ctx, "Failed to create response: $errorMessage", Toast.LENGTH_LONG).show()
+                            }
+                        )
                     }
                 )
             }

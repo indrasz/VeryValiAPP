@@ -114,7 +114,6 @@ fun ProposalScreen(
                 1 -> {
                     Proposal1Form(proposalViewModel) { recipient ->
                         recipientData = recipient
-//                        Log.d("Recipient Data from proposal 1", "$recipientData")
                         currentStep++
                     }
                 }
