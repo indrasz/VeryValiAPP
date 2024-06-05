@@ -563,9 +563,6 @@ fun Proposal4Form(
                                             onNextStepWithData(proposalItem)
                                         }
                                     }
-
-
-
                                 }
                             }
                         }

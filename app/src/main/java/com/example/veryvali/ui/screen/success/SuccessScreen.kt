@@ -78,7 +78,7 @@ fun SuccessContent(innerPadding: PaddingValues, navController: NavHostController
                         .fillMaxWidth()
                 )
                 Text(
-                    text = "Berhasil memberikan tanggapan",
+                    text = "Berhasil memberikan tanggapan/pengusulan",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black,

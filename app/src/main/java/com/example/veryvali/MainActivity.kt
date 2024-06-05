@@ -33,6 +33,7 @@ import com.example.veryvali.ui.screen.login.LoginScreen
 import com.example.veryvali.ui.screen.MainScreen
 import com.example.veryvali.ui.screen.home.HomeScreen
 import com.example.veryvali.ui.screen.profile.ProfileScreen
+import com.example.veryvali.ui.screen.profileData.ProfileDataScreen
 import com.example.veryvali.ui.screen.proposal.ProposalScreen
 import com.example.veryvali.ui.screen.register.RegisterScreen
 import com.example.veryvali.ui.screen.response.ResponseScreen
@@ -145,6 +146,9 @@ class MainActivity : ComponentActivity() {
             }
             composable("profile"){
                 ProfileScreen(navController = navController, user = user, userViewModel = userViewModel)
+            }
+            composable("profile-data"){
+                ProfileDataScreen(navController = navController, user = user, userViewModel = userViewModel)
             }
             composable("proposal"){
                 ProposalScreen(navController = navController, mapsLatitude, mapsLongitude, user = user)

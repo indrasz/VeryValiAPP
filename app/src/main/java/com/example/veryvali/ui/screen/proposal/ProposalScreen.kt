@@ -136,7 +136,7 @@ fun ProposalScreen(
                     }
                 }
                 else -> {
-                    navController.navigate("home")
+                    navController.navigate("success")
                 }
             }
         }

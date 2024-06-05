@@ -73,41 +73,6 @@ fun Proposal1Form(
 
     ) {
 
-//        Column {
-//            Text(
-//                text = "NKK",
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(bottom = 8.dp),
-//                fontWeight = FontWeight.Bold,
-//                style = TextStyle(fontSize = 14.sp)
-//            )
-//            Box {
-//                OutlinedTextField(
-//                    value = noKK,
-//                    onValueChange = { noKK = it },
-//                    colors = OutlinedTextFieldDefaults.colors(
-//                        unfocusedTextColor = Color.White,
-//                        unfocusedBorderColor = Color(0XFF0E7CDA),
-//                        focusedTextColor = Color.White,
-//                        focusedBorderColor = Color(0XFF0E7CDA),
-//                    ),
-//                    textStyle = TextStyle(color = Color.Black),
-//                    singleLine = true,
-//                    shape = RoundedCornerShape(16.dp),
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(bottom = 8.dp)
-//                        .background(
-//                            color = Color(0xFFFFFFFF),
-//                            shape = RoundedCornerShape(16.dp),
-//
-//                        ),
-//                )
-//            }
-//        }
-//        Spacer(modifier = Modifier.height(16.dp))
-
         Column {
             Text(
                 text = "NIK",

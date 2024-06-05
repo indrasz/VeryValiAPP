@@ -3,6 +3,7 @@ package com.example.veryvali.data.remote
 import android.util.Log
 import com.example.veryvali.data.model.Recipient
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -15,12 +16,18 @@ interface BansosApiService {
     @GET("api.php?limit=25&page=1")
     suspend fun getAllRecipients(): List<Recipient>
 
+    @GET("api.php")
+    suspend fun getRecipients(
+        @Query("limit") limit: Int,
+        @Query("page") page: Int
+    ): List<Recipient>
+
     @GET("api-search.php")
     suspend fun searchByNIK(
         @Query("nik") nik: String
     ): List<Recipient>
 
-    @GET("api.php?limit=25&page=1")
+    @GET("api-search.php")
     suspend fun checkNIK(
         @Query("nik") nik: String
     ): List<Recipient>
@@ -51,6 +58,20 @@ object RetrofitInstance {
 
 class BansosRepository {
     private val firestore = FirebaseFirestore.getInstance()
+    private val apiService = RetrofitInstance.api
+    suspend fun fetchRecipients(limit: Int, page: Int, onSuccess: (List<Recipient>) -> Unit, onFailure: (String) -> Unit) {
+        try {
+            val recipients = RetrofitInstance.api.getRecipients(limit, page)
+            recipients.forEach { recipient ->
+                val status = checkAndMarkRecipient(recipient)
+                recipient.status = status // Add status to the recipient
+            }
+            onSuccess(recipients)
+        } catch (e: Exception) {
+            onFailure(e.message ?: "Unknown error occurred.")
+        }
+    }
+
 
     suspend fun searchByNIK(
         nik: String,
@@ -68,20 +89,6 @@ class BansosRepository {
             onFailure(e.message ?: "Unknown error occurred.")
         }
     }
-
-    suspend fun fetchAndCheckRecipients(onSuccess: (List<Recipient>) -> Unit, onFailure: (String) -> Unit) {
-        try {
-            val recipients = RetrofitInstance.api.getAllRecipients()
-            recipients.forEach { recipient ->
-                val status = checkAndMarkRecipient(recipient)
-                recipient.status = status // Add status to the recipient
-            }
-            onSuccess(recipients)
-        } catch (e: Exception) {
-            onFailure(e.message ?: "Unknown error occurred.")
-        }
-    }
-
     suspend fun checkAndMarkRecipient(recipient: Recipient): String {
         return try {
             val responsesCollection = firestore.collection("responses")

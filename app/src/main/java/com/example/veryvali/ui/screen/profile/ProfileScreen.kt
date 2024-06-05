@@ -161,7 +161,7 @@ fun ScrollContent(innerPadding: PaddingValues, navController: NavHostController,
                         MenuItemProfile(
                             icon = Icons.Default.Person,
                             text = "Data Diri",
-                            onClick = { }
+                            onClick = {  navController.navigate("profile-data") }
                         )
                         Divider()
                         MenuItemProfile(

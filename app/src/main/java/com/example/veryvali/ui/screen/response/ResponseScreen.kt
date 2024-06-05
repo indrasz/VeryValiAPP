@@ -1,15 +1,10 @@
 package com.example.veryvali.ui.screen.response
 
-import android.annotation.SuppressLint
 import com.example.veryvali.ui.components.CustomButton
-import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.Environment
 import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -26,20 +21,25 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -58,6 +58,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
@@ -67,26 +68,18 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.edit
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.veryvali.R
-import com.example.veryvali.data.model.Proposal
 import com.example.veryvali.data.model.Recipient
 import com.example.veryvali.data.model.Response
 import com.example.veryvali.data.model.User
 import com.example.veryvali.di.ResponseViewModel
-import com.example.veryvali.di.SurveyViewModel
-import java.io.File
-import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -124,16 +117,18 @@ fun ResponseScreen(navController: NavHostController, recipient: Recipient, user:
 @Composable
 fun ResponseContent(innerPadding: PaddingValues, navController: NavHostController, recipient: Recipient, user: User?) {
 
-//    var text by remember { mutableStateOf("") }
-
     val responseViewModel: ResponseViewModel = viewModel()
     var statusKelayakan by remember { mutableStateOf(false) }
-    var alasan by remember { mutableStateOf("") }
+//    var alasan by remember { mutableStateOf("") }
     var catatan by remember { mutableStateOf("") }
     val isLoading by responseViewModel.loadingState.collectAsState()
 
     var selectedFirstImageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
     var selectedSecondImageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
+
+    val options = listOf("YA", "TIDAK")
+    var alasanExpanded by remember { mutableStateOf(false) }
+    var alasan by remember { mutableStateOf(options[0]) }
 
     LazyColumn(
         modifier = Modifier
@@ -299,30 +294,62 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
                             fontWeight = FontWeight.Bold,
                             style = TextStyle(fontSize = 14.sp)
                         )
-
-                        OutlinedTextField(
-                            value = alasan,
-                            onValueChange = { alasan = it },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                unfocusedTextColor = Color.Black,
-                                unfocusedBorderColor = Color.Black,
-                                focusedTextColor = Color.Black,
-                                focusedBorderColor = Color.Black,
-                            ),
-                            textStyle = TextStyle(color = Color.Black),
-                            singleLine = true,
-                            shape = RoundedCornerShape(16.dp),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 8.dp)
-                                .background(
-                                    color = Color(0xFFFFFFFF),
-                                    shape = RoundedCornerShape(16.dp)
+                        Box(
+                            modifier = Modifier.clickable(onClick = { alasanExpanded = !alasanExpanded })
+                        ) {
+                            OutlinedTextField(
+                                readOnly = true,
+                                value = alasan,
+                                onValueChange = { alasan = it },
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    unfocusedTextColor = Color.White,
+                                    unfocusedBorderColor = Color.Black,
+                                    focusedTextColor = Color.White,
+                                    focusedBorderColor = Color.Black,
                                 ),
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                            keyboardActions = KeyboardActions(onNext = { /* Handle next action */ })
-                        )
+                                textStyle = TextStyle(color = Color.Black),
+                                singleLine = true,
+                                shape = RoundedCornerShape(16.dp),
+                                trailingIcon = {
+                                    Icon(
+                                        Icons.Default.ArrowDropDown,
+                                        contentDescription = "Dropdown Icon",
+                                        modifier = Modifier.clickable(onClick = { alasanExpanded = !alasanExpanded })
+                                    )
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 8.dp)
+                                    .clickable(onClick = { alasanExpanded = !alasanExpanded })
+                                    .background(
+                                        color = Color(0xFFFFFFFF),
+                                        shape = RoundedCornerShape(16.dp)
+                                    ),
+                            )
+                        }
+                        if (alasanExpanded) {
+                            Column(
+                                modifier = Modifier
+                                    .background(Color.White, shape = RoundedCornerShape(24.dp))
+                                    .fillMaxWidth()
+                                    .heightIn(max = 200.dp)
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .padding(4.dp)
+                                    .verticalScroll(rememberScrollState())
+                            ) {
+                                options.forEach { selectionOption ->
+                                    DropdownMenuItem(
+                                        text = { Text(text = selectionOption) },
+                                        onClick = {
+                                            alasan = selectionOption
+                                            alasanExpanded = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
                     }
+
                     Column {
                         Text(
                             text = "Catatan",
@@ -343,7 +370,9 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
                                 focusedBorderColor = Color.Black,
                             ),
                             textStyle = TextStyle(color = Color.Black),
-                            singleLine = true,
+//                            singleLine = true,
+                            minLines = 4,
+                            maxLines = 4,
                             shape = RoundedCornerShape(16.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -467,10 +496,6 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
                                         )
                                         navController.navigate("success")
                                     }
-
-
-
-
                                 }
                             }
                         }
@@ -480,15 +505,6 @@ fun ResponseContent(innerPadding: PaddingValues, navController: NavHostControlle
         }
     }
 }
-
-//private fun ImageBitmap.asAndroidBitmap(): Bitmap {
-//    // Convert ImageBitmap to Android Bitmap
-//    val androidBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-//    androidBitmap.copyPixelsFromBuffer((this as androidx.compose.ui.graphics.AndroidImageBitmap).buffer)
-//    return androidBitmap
-//}
-
-//private const val IMAGE_REQUEST_CODE = 123
 
 @Composable
 fun ImageInputBox(

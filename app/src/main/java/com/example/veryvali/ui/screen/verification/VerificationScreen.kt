@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -32,11 +33,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -94,19 +97,36 @@ fun ScrollContent(innerPadding: PaddingValues, navController: NavHostController)
     val viewModel: BansosViewModel = viewModel()
     val recipientsState by viewModel.recipientsState.collectAsState()
     var search by remember { mutableStateOf("") }
+    val scrollState = rememberScrollState()
+
+    LaunchedEffect(scrollState) {
+        snapshotFlow { scrollState.value }
+            .collect { value ->
+                if (value == scrollState.maxValue && !viewModel.isLoadingMore) {
+                    viewModel.fetchRecipients()
+                }
+            }
+    }
+
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(innerPadding)
             .padding(horizontal = 24.dp)
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(scrollState),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
     ) {
         OutlinedTextField(
             value = search,
-            onValueChange = { search = it },
+            onValueChange = { newValue ->
+                search = newValue
+                if (newValue.isEmpty()) {
+                    viewModel.resetPage()
+                    viewModel.fetchRecipients() // Fetch all recipients when search is cleared
+                }
+            },
             label = { Text("Cari") },
             shape = RoundedCornerShape(24.dp),
             modifier = Modifier
@@ -120,6 +140,7 @@ fun ScrollContent(innerPadding: PaddingValues, navController: NavHostController)
                     if (search.isNotEmpty()) {
                         viewModel.searchRecipientByNIK(search) // Trigger search when Enter is pressed
                     } else {
+                        viewModel.resetPage()
                         viewModel.fetchRecipients() // Fetch all recipients when search is cleared
                     }
                 }
@@ -131,8 +152,8 @@ fun ScrollContent(innerPadding: PaddingValues, navController: NavHostController)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
-                ){
-                    CircularProgressIndicator() //UI loading
+                ) {
+                    CircularProgressIndicator() // UI loading
                 }
             }
             is BansosViewModel.BansosState.Error -> {
@@ -141,18 +162,21 @@ fun ScrollContent(innerPadding: PaddingValues, navController: NavHostController)
                 )
             }
             is BansosViewModel.BansosState.Success -> {
-
-//                filteredRecipients.let { recipients ->
-                    state.recipients.forEach { recipient ->
-//                        val status = viewModel.getResponseStatus(recipient.id, responses)
-                        RecipientListItem(recipient = recipient, navController = navController)
-                        Spacer(modifier = Modifier.height(12.dp))
+                state.recipients.forEach { recipient ->
+                    RecipientListItem(recipient = recipient, navController = navController)
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
+                if (viewModel.isLoadingMore) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularProgressIndicator() // Loading indicator for more data
                     }
-//                }
+                }
             }
         }
     }
-
 }
 
 @Composable

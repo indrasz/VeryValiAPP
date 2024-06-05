@@ -11,6 +11,7 @@ import com.example.veryvali.data.model.Response
 import com.example.veryvali.data.remote.BansosRepository
 import com.example.veryvali.data.remote.RetrofitInstance
 import com.example.veryvali.data.repository.ResponseRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -18,32 +19,42 @@ import kotlinx.coroutines.launch
 class BansosViewModel : ViewModel() {
 
     private val repository = BansosRepository()
-    // MutableStateFlow untuk menyimpan state dari data bansos
+    private var currentPage = 1
+    private val limit = 25
+    private val _recipients = mutableListOf<Recipient>()
     private val _recipientsState = MutableStateFlow<BansosState>(BansosState.Loading)
-    // StateFlow untuk menyediakan akses ke _recipientsState kepada pengguna luar
     val recipientsState: StateFlow<BansosState> = _recipientsState
+    var isLoadingMore = false // Add a flag for loading more data
+
     init {
-        // Memuat data bansos saat ViewModel pertama kali dibuat
         fetchRecipients()
     }
 
     fun fetchRecipients() {
+        if (isLoadingMore) return // Prevent multiple loadings at the same time
+        isLoadingMore = true
         viewModelScope.launch {
             try {
-                Log.d("BansosViewModel", "Fetching recipients...")
-                repository.fetchAndCheckRecipients(
+                repository.fetchRecipients(
+                    limit = limit,
+                    page = currentPage,
                     onSuccess = { recipients ->
-                        Log.d("BansosViewModel", "Recipients fetched successfully: $recipients")
-                        _recipientsState.value = BansosState.Success(recipients)
+                        if (recipients.isNotEmpty()) {
+                            _recipients.addAll(recipients)
+                            _recipientsState.value = BansosState.Success(_recipients.toList())
+                            currentPage++
+                        } else if (_recipients.isEmpty()) {
+                            _recipientsState.value = BansosState.Error("No recipients found.")
+                        }
                     },
                     onFailure = { error ->
-                        Log.d("BansosViewModel", "Error fetching recipients: $error")
                         _recipientsState.value = BansosState.Error(error)
                     }
                 )
             } catch (e: Exception) {
-                Log.d("BansosViewModel", "Error fetching recipients: ${e.message}")
                 _recipientsState.value = BansosState.Error(e.message ?: "Unknown error occurred.")
+            } finally {
+                isLoadingMore = false // Reset the flag after loading
             }
         }
     }
@@ -51,33 +62,30 @@ class BansosViewModel : ViewModel() {
     fun searchRecipientByNIK(nik: String) {
         viewModelScope.launch {
             try {
-                Log.d("BansosViewModel", "Searching recipient by NIK: $nik")
                 repository.searchByNIK(
                     nik = nik,
                     onSuccess = { recipients ->
-                        Log.d("BansosViewModel", "Recipient found: $recipients")
                         _recipientsState.value = BansosState.Success(recipients)
                     },
                     onFailure = { error ->
-                        Log.d("BansosViewModel", "Error searching recipient: $error")
                         _recipientsState.value = BansosState.Error(error)
                     }
                 )
             } catch (e: Exception) {
-                Log.d("BansosViewModel", "Error searching recipient: ${e.message}")
                 _recipientsState.value = BansosState.Error(e.message ?: "Unknown error occurred.")
             }
         }
     }
 
 
-    // Sealed class yang merepresentasikan state dari data bansos
+    fun resetPage() {
+        currentPage = 1
+        _recipients.clear()
+    }
+
     sealed class BansosState {
-        // State saat data sedang dimuat
         object Loading : BansosState()
-        // State saat data berhasil diambil, dengan daftar penerima sebagai properti
         data class Success(val recipients: List<Recipient>) : BansosState()
-        // State saat terjadi kesalahan dalam mengambil data, dengan pesan kesalahan sebagai properti
         data class Error(val message: String) : BansosState()
     }
 }
