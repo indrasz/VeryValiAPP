@@ -31,6 +31,7 @@ import com.example.veryvali.di.BansosViewModel
 import com.example.veryvali.di.UserViewModel
 import com.example.veryvali.ui.screen.login.LoginScreen
 import com.example.veryvali.ui.screen.MainScreen
+import com.example.veryvali.ui.screen.about.AboutScreen
 import com.example.veryvali.ui.screen.home.HomeScreen
 import com.example.veryvali.ui.screen.profile.ProfileScreen
 import com.example.veryvali.ui.screen.profileData.ProfileDataScreen
@@ -149,6 +150,9 @@ class MainActivity : ComponentActivity() {
             }
             composable("profile-data"){
                 ProfileDataScreen(navController = navController, user = user, userViewModel = userViewModel)
+            }
+            composable("about"){
+                AboutScreen(navController = navController, user = user, userViewModel = userViewModel)
             }
             composable("proposal"){
                 ProposalScreen(navController = navController, mapsLatitude, mapsLongitude, user = user)

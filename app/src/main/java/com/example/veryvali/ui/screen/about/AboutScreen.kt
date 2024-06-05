@@ -1,4 +1,4 @@
-package com.example.veryvali.ui.screen.profile
+package com.example.veryvali.ui.screen.about
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -72,7 +72,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(navController: NavHostController, user: User?, userViewModel: UserViewModel)  {
+fun AboutScreen(navController: NavHostController, user: User?, userViewModel: UserViewModel)  {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -80,7 +80,7 @@ fun ProfileScreen(navController: NavHostController, user: User?, userViewModel: 
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        "Akun",
+                        "Tentang",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -95,21 +95,19 @@ fun ProfileScreen(navController: NavHostController, user: User?, userViewModel: 
                 },
                 scrollBehavior = scrollBehavior,
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Color(0xFF0E7CDA), // Change this to your desired color
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White
+                    containerColor = Color(0xFFFFFFFF), // Change this to your desired color
+                    titleContentColor = Color.Black,
+                    navigationIconContentColor = Color.Black
                 )
             )
         },
     ) { innerPadding ->
-        ScrollContent(innerPadding, navController, user, userViewModel)
+        ScrollContent(innerPadding, user)
     }
 }
 
 @Composable
-fun ScrollContent(innerPadding: PaddingValues, navController: NavHostController, user: User?, userViewModel: UserViewModel) {
-
-    val authRepository = AuthRepository()
+fun ScrollContent(innerPadding: PaddingValues, user: User?) {
 
     val context = LocalContext.current
 
@@ -124,103 +122,38 @@ fun ScrollContent(innerPadding: PaddingValues, navController: NavHostController,
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(color = Color(0xFF0E7CDA))
+                    .background(color = Color(0xFFFFFFFF))
                     .padding(horizontal = 16.dp, vertical = 12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.img_user),
-                    contentDescription = "Hero Image",
+                Text(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(bottom = 8.dp),
+                    fontWeight = FontWeight.Normal,
+                    style = TextStyle(fontSize = 24.sp),
+                    text = "Tentang Aplikasi"
                 )
-                user?.let {
-                    Text(
-                        text = it.username,
-                        style = MaterialTheme.typography.titleLarge,
-                        color = Color.White,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(vertical = 16.dp)
-                    )
-                }
-            }
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Column(
+                Text(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.White)
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column {
-                        MenuItemProfile(
-                            icon = Icons.Default.Person,
-                            text = "Data Diri",
-                            onClick = {  navController.navigate("profile-data") }
-                        )
-//                        Divider()
-//                        MenuItemProfile(
-//                            icon = Icons.Default.Lock,
-//                            text = "Perbarui Kata Sandi",
-//                            onClick = { }
-//                        )
-                        Divider()
-                        MenuItemProfile(
-                            icon = Icons.Default.Info,
-                            text = "Tentang",
-                            onClick = { navController.navigate("about") }
-                        )
-                    }
-                }
-                CustomButton(
-                    text = "Keluar",
-                    fullWidth = false,
-                ) {
-                    authRepository.userLogout(
-                        onSuccess = {
-                            userViewModel.clearUserData()
-                            navController.navigate("login") {
-                                popUpTo("home") { inclusive = false }
-                            }
-                        },
-                        onFailure = { error ->
-                            Toast.makeText(context, error, Toast.LENGTH_LONG).show()
-                        }
-                    )
-                    navController.navigate("login")
-                }
+                        .fillMaxWidth()
+                        .padding(bottom = 14.dp),
+                    fontWeight = FontWeight.Bold,
+                    style = TextStyle(fontSize = 24.sp),
+                    text = "Verivali"
+                )
+
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 14.dp),
+                    fontWeight = FontWeight.Normal,
+                    style = TextStyle(fontSize = 24.sp),
+                    text = "Selamat datang di Aplikasi Verivikasi Pengusulan Dinas Sosial Kota Medan\u2028\u2028Aplikasi yang dapat digunakan untuk melihat kepesertaan bantuan sosial dan juga digunakan untuk melakukan pendataan target survey Dinas Sosial Kota Medan oleh petugas lapangan yang ditunjuk.\n" +
+                            "\n" +
+                            "Petugas dapat melihat daftar penerima bantuan sosial yang ada di sekitar wilayah administrasinya dan dapat memberikan sanggahan terhadap penerima bantuan yang dianggap tidak layak. Selain itu Petugas juga dapat mengusulkan masyarakat yang dianggap layak untuk masuk ke dalam DTKS dan/atau menerima bantuan sosial."
+                )
             }
         }
-    }
-}
-
-
-@Composable
-fun MenuItemProfile(icon: ImageVector, text: String, onClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            modifier = Modifier.size(24.dp)
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(text = text, fontSize = 16.sp, fontWeight = FontWeight.Medium)
-        Spacer(modifier = Modifier.weight(1f))
-        Icon(
-            imageVector = Icons.Default.KeyboardArrowRight,
-            contentDescription = null,
-            modifier = Modifier.size(24.dp)
-        )
     }
 }
