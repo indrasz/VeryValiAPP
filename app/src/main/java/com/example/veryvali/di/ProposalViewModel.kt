@@ -4,13 +4,10 @@ import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.veryvali.data.model.Individual
 import com.example.veryvali.data.model.Proposal
 import com.example.veryvali.data.model.Recipient
 import com.example.veryvali.data.remote.BansosRepository
-import com.example.veryvali.data.repository.IndividualRepository
 import com.example.veryvali.data.repository.ProposalRepository
-import com.example.veryvali.data.repository.RecipientRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -25,7 +22,8 @@ class ProposalViewModel : ViewModel() {
     fun cekDataNIK(
         nik: String,
         onNext: (Recipient) -> Unit,
-        onFailure: (String) -> Unit
+//        onFailure: (String) -> Unit,
+//        function: (Recipient) -> Unit
     ) {
         _loadingState.value = true // Set isLoading true saat proses pengecekan dimulai
         viewModelScope.launch {
@@ -35,11 +33,12 @@ class ProposalViewModel : ViewModel() {
                     Log.d("ProposalViewModel", "Recipient Data: $recipient")
                     _loadingState.value = false // Set isLoading false saat proses selesai
                     onNext(recipient)
+//                    function(recipient)
                 },
                 onFailure = { error ->
                     Log.d("ProposalViewModel", "Error: $error")
                     _loadingState.value = false // Set isLoading false saat proses selesai
-                    onFailure(error)
+//                    onFailure(error)
                 }
             )
         }

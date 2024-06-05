@@ -1,6 +1,7 @@
 package com.example.veryvali.ui.screen.proposal
 
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.example.veryvali.ui.components.CustomButton
 import androidx.compose.foundation.background
@@ -46,7 +47,7 @@ import com.example.veryvali.data.model.Recipient
 import com.example.veryvali.di.IndividualViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
+//@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Proposal2Form(
     individualViewModel: IndividualViewModel,
@@ -102,7 +103,7 @@ fun Proposal2Form(
         ) {
 
             Column {
-//                Text("Data from Proposal 1: ${recipientData?.id}")
+                Text("Data from Proposal 1: ${recipientData?.id}")
                 Text(
                     text = "Nomor Kartu Keluarga",
                     modifier = Modifier
@@ -814,9 +815,20 @@ fun Proposal2Form(
                                 idRecipient = it.id,
                             )
                         }
-                        individualViewModel.createIndividualWithRecipientId(individualData!!, recipientData.nik) { individual ->
+                        individualViewModel.createIndividualWithRecipientId(individualData!!, recipientData.nik, ) { individual ->
                             onNextStepWithData(individual)
                         }
+
+//                        individualViewModel.createIndividualWithRecipientId(
+//                            individualData!!,
+//                            recipientData.nik,
+//                            onNext = { individual ->
+//                                onNextStepWithData(individual)
+//                            },
+//                            onFailure = { errorMessage ->
+//                                Toast.makeText(ctx, "Failed to create response: $errorMessage", Toast.LENGTH_LONG).show()
+//                            }
+//                        )
                     },
                 )
             }

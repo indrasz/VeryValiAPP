@@ -20,7 +20,8 @@ class IndividualViewModel : ViewModel() {
     fun createIndividualWithRecipientId(
         individual: Individual,
         recipientId: String,
-        onNext: (String) -> Unit
+        onNext: (String) -> Unit,
+//        onFailure: (String) -> Unit
     ) {
         _loadingState.value = true // Set loading state menjadi true saat operasi dimulai
 
@@ -32,9 +33,10 @@ class IndividualViewModel : ViewModel() {
                     _loadingState.value = false // Set loading state menjadi false saat operasi selesai
                     onNext(documentId)
                 },
-                onFailure = {
+                onFailure = { e ->
                     _loadingState.value = false // Set loading state menjadi false saat operasi selesai
                     // Handle failure if needed
+//                    onFailure(e)
                 }
             )
         }
