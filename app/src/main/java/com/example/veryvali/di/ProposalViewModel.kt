@@ -23,7 +23,6 @@ class ProposalViewModel : ViewModel() {
         nik: String,
         onNext: (Recipient) -> Unit,
 //        onFailure: (String) -> Unit,
-//        function: (Recipient) -> Unit
     ) {
         _loadingState.value = true // Set isLoading true saat proses pengecekan dimulai
         viewModelScope.launch {

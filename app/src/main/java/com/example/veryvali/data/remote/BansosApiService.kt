@@ -27,7 +27,7 @@ interface BansosApiService {
         @Query("nik") nik: String
     ): List<Recipient>
 
-    @GET("api-search.php")
+    @GET("api.php?limit=25&page=1")
     suspend fun checkNIK(
         @Query("nik") nik: String
     ): List<Recipient>

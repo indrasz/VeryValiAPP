@@ -47,7 +47,7 @@ import com.example.veryvali.data.model.Recipient
 import com.example.veryvali.di.IndividualViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
-//@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Proposal2Form(
     individualViewModel: IndividualViewModel,
@@ -103,7 +103,7 @@ fun Proposal2Form(
         ) {
 
             Column {
-                Text("Data from Proposal 1: ${recipientData?.id}")
+//                Text("Data from Proposal 1: ${recipientData?.id}")
                 Text(
                     text = "Nomor Kartu Keluarga",
                     modifier = Modifier

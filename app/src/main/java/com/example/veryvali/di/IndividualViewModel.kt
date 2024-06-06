@@ -33,7 +33,7 @@ class IndividualViewModel : ViewModel() {
                     _loadingState.value = false // Set loading state menjadi false saat operasi selesai
                     onNext(documentId)
                 },
-                onFailure = { e ->
+                onFailure = {
                     _loadingState.value = false // Set loading state menjadi false saat operasi selesai
                     // Handle failure if needed
 //                    onFailure(e)
