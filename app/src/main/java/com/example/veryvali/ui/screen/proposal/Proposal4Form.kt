@@ -131,6 +131,8 @@ fun Proposal4Form(
     val selectedDateMillis = remember { mutableStateOf<Long?>(null) }
 
     val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    //Date
+    // 2024-06-06
     val context = LocalContext.current
     val isLoading by proposalViewModel.loadingState.collectAsState()
 

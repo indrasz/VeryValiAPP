@@ -26,7 +26,7 @@ class ProposalViewModel : ViewModel() {
     ) {
         _loadingState.value = true // Set isLoading true saat proses pengecekan dimulai
         viewModelScope.launch {
-            repository.checkNIK(
+            repository.searchCheckByNIK(
                 nik,
                 onSuccess = { recipient ->
                     Log.d("ProposalViewModel", "Recipient Data: $recipient")

@@ -127,6 +127,26 @@ class BansosRepository {
         }
     }
 
+    suspend fun searchCheckByNIK(
+        nik: String,
+        onSuccess: (Recipient) -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        try {
+            val response = RetrofitInstance.api.searchByNIK(nik)
+            val recipient = response.find { it.nik == nik }
+            if (recipient != null) {
+                Log.d("Recipient Data Response", response.toString())
+                saveRecipientToFirestore(recipient, onSuccess, onFailure)
+            } else {
+                onFailure("No recipients found.")
+            }
+        } catch (e: Exception) {
+            onFailure(e.message ?: "Unknown error occurred.")
+        }
+    }
+
+
     private fun saveRecipientToFirestore(
         recipient: Recipient,
         onSuccess: (Recipient) -> Unit,
